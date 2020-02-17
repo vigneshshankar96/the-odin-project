@@ -1,5 +1,15 @@
 let myLibrary = [];
 
+const myLibraryDb = firebase.database().ref('/myLibrary');
+
+function writeData() {
+    myLibrary.forEach((book, idx) => {
+        myLibraryDb.child(book.id).set(
+            book.toObject()
+        );
+    })
+}
+
 function Book(author, title, pages, isRead) {
     this.author = author;
     this.title = title;
@@ -13,12 +23,13 @@ function Book(author, title, pages, isRead) {
     }
     this.id = this.createId();
 
-    this.info = function() {
-        let readStatus = 'not read yet';
-        if (this.isRead) {
-            readStatus = 'completed read';
-        }
-        return this.title + ' by ' + this.author + ', ' + this.pages + ' pages, ' + readStatus;
+    this.toObject = function() {
+        return {
+            author: this.author,
+            title: this.title,
+            pages: this.pages,
+            isRead: this.isRead
+        };
     }
 
     this.toNode = function() {
@@ -50,14 +61,15 @@ function renderLibrary() {
     while (bookShelf.firstChild) {
         bookShelf.removeChild(bookShelf.firstChild);
     }
-    bookShelf.appendChild(new createNewBookNode())
+    bookShelf.appendChild(new createAddNewBookNode())
     myLibrary.forEach(book => {
         bookNode = book.toNode();
         bookShelf.appendChild(bookNode);
     });
+    writeData()
 }
 
-function createNewBookNode() {
+function createAddNewBookNode() {
     let newBookNode = document.createElement('div');
 
     let newTitleLabel = document.createElement('label');
@@ -118,5 +130,5 @@ function removeFromLibrary(event) {
 addToLibrary(new Book('Frank Herbert', 'Dune', 600, false));
 addToLibrary(new Book('Kurt Vonnegut', 'The Sirens of Titan', 300, true));
 addToLibrary(new Book('Blake Crouch', 'Recursion', 400, true));
-addToLibrary(new Book('Stuart Turton', 'The seven deaths of Evelyn Hardcastle',350, true));
+addToLibrary(new Book('Stuart Turton', 'The Seven Deaths of Evelyn Hardcastle',350, true));
 addToLibrary(new Book('J.R.R. Tolkien', 'The Hobbit', 295, true));
