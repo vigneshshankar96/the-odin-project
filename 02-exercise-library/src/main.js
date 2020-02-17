@@ -7,7 +7,7 @@ function Book(author, title, pages, isRead) {
     this.isRead = isRead;
     this.createId = function() {
         return 'xxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     }
@@ -28,18 +28,18 @@ function Book(author, title, pages, isRead) {
         let bookNodeTitle = document.createElement('h2');
         let bookNodeAuthor = document.createElement('div');
         let bookNodePages = document.createElement('div');
-        let bookNodeDelete = document.createElement('button');
+        let bookNodeRemove = document.createElement('button');
 
         bookNodeTitle.textContent = this.title;
         bookNodeAuthor.textContent = 'by ' + this.author;
         bookNodePages.textContent = this.pages + ' pages';
-        bookNodeDelete.textContent = 'Remove';
+        bookNodeRemove.textContent = 'Remove';
 
         bookNode.appendChild(bookNodeTitle);
         bookNode.appendChild(bookNodeAuthor);
         bookNode.appendChild(bookNodePages);
-        bookNodeDelete.addEventListener('click', removeFromLibrary);
-        bookNode.appendChild(bookNodeDelete);
+        bookNodeRemove.addEventListener('click', removeFromLibrary);
+        bookNode.appendChild(bookNodeRemove);
 
         return bookNode;
     }
@@ -50,14 +50,49 @@ function renderLibrary() {
     while (bookShelf.firstChild) {
         bookShelf.removeChild(bookShelf.firstChild);
     }
+    bookShelf.appendChild(new createNewBookNode())
     myLibrary.forEach(book => {
         bookNode = book.toNode();
         bookShelf.appendChild(bookNode);
     });
 }
 
-function addToLibrary(book) {
-    myLibrary.push(book);
+function createNewBookNode() {
+    let newBookNode = document.createElement('div');
+    let newBookNodeTitle = document.createElement('input');
+    let newBookNodeAuthor = document.createElement('input');
+    let newBookNodePages = document.createElement('input');
+    let newBookNodeAdd = document.createElement('button');
+
+    newBookNodeTitle.setAttribute('id', 'newTitle');
+    newBookNodeAuthor.setAttribute('id', 'newAuthor');
+    newBookNodePages.setAttribute('id', 'newPages');
+    newBookNodeAdd.textContent = 'Add';
+
+    newBookNode.appendChild(newBookNodeTitle);
+    newBookNode.appendChild(newBookNodeAuthor);
+    newBookNode.appendChild(newBookNodePages);
+    newBookNodeAdd.addEventListener('click', createBookAndAddToLibrary);
+    newBookNode.appendChild(newBookNodeAdd);
+
+    return newBookNode;
+}
+
+function createBookAndAddToLibrary(event) {
+    book = event.target.parentNode;
+    newBookTitle = book.querySelector('#newTitle').value;
+    newBookAuthor = book.querySelector('#newAuthor').value;
+    newBookPages = parseInt(book.querySelector('#newPages').value);
+    newBook = new Book(newBookTitle, newBookAuthor, newBookPages, false);
+    addToLibrary(newBook, toTheBeginning=true);
+}
+
+function addToLibrary(book, toTheBeginning=false) {
+    if (toTheBeginning) {
+        myLibrary.unshift(book);
+    } else {
+        myLibrary.push(book);
+    }
     renderLibrary();
 }
 
