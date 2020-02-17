@@ -59,21 +59,32 @@ function renderLibrary() {
 
 function createNewBookNode() {
     let newBookNode = document.createElement('div');
-    let newBookNodeTitle = document.createElement('input');
-    let newBookNodeAuthor = document.createElement('input');
-    let newBookNodePages = document.createElement('input');
-    let newBookNodeAdd = document.createElement('button');
 
-    newBookNodeTitle.setAttribute('id', 'newTitle');
-    newBookNodeAuthor.setAttribute('id', 'newAuthor');
-    newBookNodePages.setAttribute('id', 'newPages');
-    newBookNodeAdd.textContent = 'Add';
+    let newTitleLabel = document.createElement('label');
+    newTitleLabel.textContent = 'Title';
+    newBookNode.appendChild(newTitleLabel);
+    let newTitleValue = document.createElement('input');
+    newTitleValue.setAttribute('id', 'newTitle');
+    newBookNode.appendChild(newTitleValue);
 
-    newBookNode.appendChild(newBookNodeTitle);
-    newBookNode.appendChild(newBookNodeAuthor);
-    newBookNode.appendChild(newBookNodePages);
-    newBookNodeAdd.addEventListener('click', createBookAndAddToLibrary);
-    newBookNode.appendChild(newBookNodeAdd);
+    let newAuthorLabel = document.createElement('label');
+    newAuthorLabel.textContent = 'Author';
+    newBookNode.appendChild(newAuthorLabel);
+    let newAuthorValue = document.createElement('input');
+    newAuthorValue.setAttribute('id', 'newAuthor');
+    newBookNode.appendChild(newAuthorValue);
+
+    let newPagesLabel = document.createElement('label');
+    newPagesLabel.textContent = 'Number of pages';
+    newBookNode.appendChild(newPagesLabel);
+    let newPagesValue = document.createElement('input');
+    newPagesValue.setAttribute('id', 'newPages');
+    newBookNode.appendChild(newPagesValue);
+
+    let newBookAdd = document.createElement('button');
+    newBookAdd.textContent = 'Add';
+    newBookAdd.addEventListener('click', createBookAndAddToLibrary);
+    newBookNode.appendChild(newBookAdd);
 
     return newBookNode;
 }
@@ -83,7 +94,7 @@ function createBookAndAddToLibrary(event) {
     newBookTitle = book.querySelector('#newTitle').value;
     newBookAuthor = book.querySelector('#newAuthor').value;
     newBookPages = parseInt(book.querySelector('#newPages').value);
-    newBook = new Book(newBookTitle, newBookAuthor, newBookPages, false);
+    newBook = new Book(newBookAuthor, newBookTitle, newBookPages, false);
     addToLibrary(newBook, toTheBeginning=true);
 }
 
