@@ -1,11 +1,12 @@
 let myLibrary = [];
 
-const myLibraryDb = firebase.database().ref('/myLibrary');
+const database = firebase.database();
+const myLibraryDb = database.ref('/myLibrary');
 
 function writeData() {
-    myLibrary.forEach((book, idx) => {
+    myLibrary.forEach((book) => {
         myLibraryDb.child(book.id).set(
-            book.toObject()
+            book.asObject
         );
     })
 }
@@ -15,22 +16,14 @@ function Book(author, title, pages, isRead) {
     this.title = title;
     this.pages = pages;
     this.isRead = isRead;
-    this.createId = function() {
-        return 'xxxx'.replace(/[xy]/g, function(c) {
-            let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-    this.id = this.createId();
+    this.id = 'placeholder';
 
-    this.toObject = function() {
-        return {
-            author: this.author,
-            title: this.title,
-            pages: this.pages,
-            isRead: this.isRead
-        };
-    }
+    this.asObject = {
+        author: this.author,
+        title: this.title,
+        pages: this.pages,
+        isRead: this.isRead
+    };
 
     this.toNode = function() {
 
@@ -107,15 +100,20 @@ function createBookAndAddToLibrary(event) {
     newBookAuthor = book.querySelector('#newAuthor').value;
     newBookPages = parseInt(book.querySelector('#newPages').value);
     newBook = new Book(newBookAuthor, newBookTitle, newBookPages, false);
-    addToLibrary(newBook, toTheBeginning=true);
+    addToLibrary(newBook, atTheBeginning=true);
 }
 
-function addToLibrary(book, toTheBeginning=false) {
-    if (toTheBeginning) {
+function addToLibrary(book, atTheBeginning=false) {
+    if (atTheBeginning) {
         myLibrary.unshift(book);
     } else {
         myLibrary.push(book);
     }
+    const bookId = myLibraryDb.push().key;
+    book.id = bookId;
+    myLibraryDb.child(bookId).set(
+        book.asObject
+    );
     renderLibrary();
 }
 
@@ -124,6 +122,7 @@ function removeFromLibrary(event) {
     myLibrary = myLibrary.filter(book => 
         book.id !== bookId
     );
+    myLibraryDb.child(bookId).remove();
     renderLibrary();
 }
 
