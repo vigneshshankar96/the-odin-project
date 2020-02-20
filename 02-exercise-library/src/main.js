@@ -27,23 +27,17 @@ function Book(author, title, pages, isRead) {
         let bookNode = document.createElement('div');
         bookNode.setAttribute('id', this.id);
 
-        let bookNodeTitleLabel = document.createElement('label');
-        bookNodeTitleLabel.textContent = 'Title';
-        bookNode.appendChild(bookNodeTitleLabel);
         let bookNodeTitleValue = document.createElement('input');
         bookNodeTitleValue.defaultValue = this.title;
         bookNode.appendChild(bookNodeTitleValue);
 
         let bookNodeAuthorLabel = document.createElement('label');
-        bookNodeAuthorLabel.textContent = 'Author';
+        bookNodeAuthorLabel.textContent = ' by ';
         bookNode.appendChild(bookNodeAuthorLabel);
         let bookNodeAuthorValue = document.createElement('input');
         bookNodeAuthorValue.defaultValue = this.author;
         bookNode.appendChild(bookNodeAuthorValue);
 
-        let bookNodePagesLabel = document.createElement('label');
-        bookNodePagesLabel.textContent = 'Number of pages';
-        bookNode.appendChild(bookNodePagesLabel);
         let bookNodePagesValue = document.createElement('input');
         bookNodePagesValue.defaultValue = this.pages;
         bookNode.appendChild(bookNodePagesValue);
@@ -77,25 +71,22 @@ function renderLibrary() {
 function createAddNewBookNode() {
     let newBookNode = document.createElement('div');
 
-    let newTitleLabel = document.createElement('label');
-    newTitleLabel.textContent = 'Title';
-    newBookNode.appendChild(newTitleLabel);
     let newTitleValue = document.createElement('input');
     newTitleValue.setAttribute('id', 'newTitle');
+    newTitleValue.placeholder = 'Book title';
     newBookNode.appendChild(newTitleValue);
 
     let newAuthorLabel = document.createElement('label');
-    newAuthorLabel.textContent = 'Author';
+    newAuthorLabel.textContent = ' by ';
     newBookNode.appendChild(newAuthorLabel);
     let newAuthorValue = document.createElement('input');
     newAuthorValue.setAttribute('id', 'newAuthor');
+    newAuthorValue.placeholder = 'Author';
     newBookNode.appendChild(newAuthorValue);
 
-    let newPagesLabel = document.createElement('label');
-    newPagesLabel.textContent = 'Number of pages';
-    newBookNode.appendChild(newPagesLabel);
     let newPagesValue = document.createElement('input');
     newPagesValue.setAttribute('id', 'newPages');
+    newPagesValue.placeholder = 'Number of pages';
     newBookNode.appendChild(newPagesValue);
 
     let newBookAdd = document.createElement('button');
