@@ -1,11 +1,11 @@
-let myLibrary = [];
+let myLibraryLocal = [];
 
 const database = firebase.database();
-const myLibraryDb = database.ref('/myLibrary');
+const myLibraryRemote = database.ref('/myLibraryRemote');
 
 function writeData() {
-    myLibrary.forEach((book) => {
-        myLibraryDb.child(book.id).set(
+    myLibraryLocal.forEach((book) => {
+        myLibraryRemote.child(book.id).set(
             book.asObject
         );
     })
@@ -16,32 +16,44 @@ function Book(author, title, pages, isRead) {
     this.title = title;
     this.pages = pages;
     this.isRead = isRead;
-    this.id = 'placeholder';
+    this.id = myLibraryRemote.push().key;
 
     this.asObject = {
-        author: this.author,
-        title: this.title,
-        pages: this.pages,
-        isRead: this.isRead
+        author, title, pages, isRead
     };
 
     this.toNode = function() {
 
         let bookNode = document.createElement('div');
         bookNode.setAttribute('id', this.id);
-        let bookNodeTitle = document.createElement('h2');
-        let bookNodeAuthor = document.createElement('div');
-        let bookNodePages = document.createElement('div');
+
+        let bookNodeTitleLabel = document.createElement('label');
+        bookNodeTitleLabel.textContent = 'Title';
+        bookNode.appendChild(bookNodeTitleLabel);
+        let bookNodeTitleValue = document.createElement('input');
+        bookNodeTitleValue.defaultValue = this.title;
+        bookNode.appendChild(bookNodeTitleValue);
+
+        let bookNodeAuthorLabel = document.createElement('label');
+        bookNodeAuthorLabel.textContent = 'Author';
+        bookNode.appendChild(bookNodeAuthorLabel);
+        let bookNodeAuthorValue = document.createElement('input');
+        bookNodeAuthorValue.defaultValue = this.author;
+        bookNode.appendChild(bookNodeAuthorValue);
+
+        let bookNodePagesLabel = document.createElement('label');
+        bookNodePagesLabel.textContent = 'Number of pages';
+        bookNode.appendChild(bookNodePagesLabel);
+        let bookNodePagesValue = document.createElement('input');
+        bookNodePagesValue.defaultValue = this.pages;
+        bookNode.appendChild(bookNodePagesValue);
+
+        let bookNodeUpdate = document.createElement('button');
+        bookNodeUpdate.textContent = 'Update';
+        bookNode.appendChild(bookNodeUpdate);
+
         let bookNodeRemove = document.createElement('button');
-
-        bookNodeTitle.textContent = this.title;
-        bookNodeAuthor.textContent = 'by ' + this.author;
-        bookNodePages.textContent = this.pages + ' pages';
         bookNodeRemove.textContent = 'Remove';
-
-        bookNode.appendChild(bookNodeTitle);
-        bookNode.appendChild(bookNodeAuthor);
-        bookNode.appendChild(bookNodePages);
         bookNodeRemove.addEventListener('click', removeFromLibrary);
         bookNode.appendChild(bookNodeRemove);
 
@@ -55,7 +67,7 @@ function renderLibrary() {
         bookShelf.removeChild(bookShelf.firstChild);
     }
     bookShelf.appendChild(new createAddNewBookNode())
-    myLibrary.forEach(book => {
+    myLibraryLocal.forEach(book => {
         bookNode = book.toNode();
         bookShelf.appendChild(bookNode);
     });
@@ -105,13 +117,11 @@ function createBookAndAddToLibrary(event) {
 
 function addToLibrary(book, atTheBeginning=false) {
     if (atTheBeginning) {
-        myLibrary.unshift(book);
+        myLibraryLocal.unshift(book);
     } else {
-        myLibrary.push(book);
+        myLibraryLocal.push(book);
     }
-    const bookId = myLibraryDb.push().key;
-    book.id = bookId;
-    myLibraryDb.child(bookId).set(
+    myLibraryRemote.child(book.id).set(
         book.asObject
     );
     renderLibrary();
@@ -119,10 +129,10 @@ function addToLibrary(book, atTheBeginning=false) {
 
 function removeFromLibrary(event) {
     bookId = event.target.parentNode.getAttribute('id');
-    myLibrary = myLibrary.filter(book => 
+    myLibraryLocal = myLibraryLocal.filter(book => 
         book.id !== bookId
     );
-    myLibraryDb.child(bookId).remove();
+    myLibraryRemote.child(bookId).remove();
     renderLibrary();
 }
 
