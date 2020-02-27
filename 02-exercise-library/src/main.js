@@ -2,38 +2,38 @@
 const database = firebase.database();
 const myLibraryRemote = database.ref('/myLibraryRemote');
 
-let bookShelf = document.querySelector('book-shelf');
+const bookShelf = document.querySelector('book-shelf');
 bookShelf.appendChild(new createAddNewBookNode())
 
 function toNode(id, title, author, pages) {
 
-    let bookNode = document.createElement('div');
+    const bookNode = document.createElement('div');
     bookNode.setAttribute('id', id);
 
-    let bookNodeTitleValue = document.createElement('input');
+    const bookNodeTitleValue = document.createElement('input');
     bookNodeTitleValue.setAttribute('class', 'title');
     bookNodeTitleValue.defaultValue = title;
     bookNode.appendChild(bookNodeTitleValue);
 
-    let bookNodeAuthorLabel = document.createElement('label');
+    const bookNodeAuthorLabel = document.createElement('label');
     bookNodeAuthorLabel.textContent = ' by ';
     bookNode.appendChild(bookNodeAuthorLabel);
-    let bookNodeAuthorValue = document.createElement('input');
+    const bookNodeAuthorValue = document.createElement('input');
     bookNodeAuthorValue.setAttribute('class', 'author');
     bookNodeAuthorValue.defaultValue = author;
     bookNode.appendChild(bookNodeAuthorValue);
 
-    let bookNodePagesValue = document.createElement('input');
+    const bookNodePagesValue = document.createElement('input');
     bookNodePagesValue.setAttribute('class', 'pages');
     bookNodePagesValue.defaultValue = pages;
     bookNode.appendChild(bookNodePagesValue);
 
-    let bookNodeUpdate = document.createElement('button');
+    const bookNodeUpdate = document.createElement('button');
     bookNodeUpdate.textContent = 'Update';
     bookNodeUpdate.addEventListener('click', updateBookInLibrary);
     bookNode.appendChild(bookNodeUpdate);
 
-    let bookNodeRemove = document.createElement('button');
+    const bookNodeRemove = document.createElement('button');
     bookNodeRemove.textContent = 'Remove';
     bookNodeRemove.addEventListener('click', removeBookFromLibrary);
     bookNode.appendChild(bookNodeRemove);
@@ -42,27 +42,27 @@ function toNode(id, title, author, pages) {
 }
 
 function createAddNewBookNode() {
-    let newBookNode = document.createElement('div');
+    const newBookNode = document.createElement('div');
 
-    let newTitleValue = document.createElement('input');
+    const newTitleValue = document.createElement('input');
     newTitleValue.setAttribute('id', 'newTitle');
     newTitleValue.placeholder = 'Book title';
     newBookNode.appendChild(newTitleValue);
 
-    let newAuthorLabel = document.createElement('label');
+    const newAuthorLabel = document.createElement('label');
     newAuthorLabel.textContent = ' by ';
     newBookNode.appendChild(newAuthorLabel);
-    let newAuthorValue = document.createElement('input');
+    const newAuthorValue = document.createElement('input');
     newAuthorValue.setAttribute('id', 'newAuthor');
     newAuthorValue.placeholder = 'Author';
     newBookNode.appendChild(newAuthorValue);
 
-    let newPagesValue = document.createElement('input');
+    const newPagesValue = document.createElement('input');
     newPagesValue.setAttribute('id', 'newPages');
     newPagesValue.placeholder = 'Number of pages';
     newBookNode.appendChild(newPagesValue);
 
-    let newBookAdd = document.createElement('button');
+    const newBookAdd = document.createElement('button');
     newBookAdd.textContent = 'Add';
     newBookAdd.addEventListener('click', addBookToLibrary)
     newBookNode.appendChild(newBookAdd);
@@ -92,9 +92,9 @@ myLibraryRemote.on('child_added', snapshot => {
 
 function updateBookInLibrary(event) {
     const book = event.target.parentNode;
-    const title = book.getElementsByClassName('title')[0].value;
-    const author = book.getElementsByClassName('author')[0].value;
-    const pages = parseInt(book.getElementsByClassName('pages')[0].value);
+    const title = book.querySelector('.title').value;
+    const author = book.querySelector('.author').value;
+    const pages = parseInt(book.querySelector('.pages').value);
     const isRead = false;
 
     myLibraryRemote.child(book.id).update({
@@ -103,6 +103,13 @@ function updateBookInLibrary(event) {
 }
 
 myLibraryRemote.on('child_changed', snapshot => {
+    const book = snapshot.val();
+    const bookId = snapshot.key;
+    const bookToUpdate = bookShelf.querySelector('#' + bookId);
+    bookToUpdate.querySelector('.title').value = book.title;
+    bookToUpdate.querySelector('.author').value = book.author;
+    bookToUpdate.querySelector('.pages').value = book.pages;
+    console.log('Hello')
 })
 
 function removeBookFromLibrary(event) {
