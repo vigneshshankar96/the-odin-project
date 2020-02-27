@@ -109,7 +109,6 @@ myLibraryRemote.on('child_changed', snapshot => {
     bookToUpdate.querySelector('.title').value = book.title;
     bookToUpdate.querySelector('.author').value = book.author;
     bookToUpdate.querySelector('.pages').value = book.pages;
-    console.log('Hello')
 })
 
 function removeBookFromLibrary(event) {
