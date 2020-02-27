@@ -2,7 +2,7 @@
 const database = firebase.database();
 const myLibraryRemote = database.ref('/myLibraryRemote');
 
-bookShelf = document.querySelector('book-shelf');
+let bookShelf = document.querySelector('book-shelf');
 bookShelf.appendChild(new createAddNewBookNode())
 
 function toNode(id, title, author, pages) {
@@ -11,7 +11,7 @@ function toNode(id, title, author, pages) {
     bookNode.setAttribute('id', id);
 
     let bookNodeTitleValue = document.createElement('input');
-    bookNodeTitleValue.setAttribute('name', 'title');
+    bookNodeTitleValue.setAttribute('class', 'title');
     bookNodeTitleValue.defaultValue = title;
     bookNode.appendChild(bookNodeTitleValue);
 
@@ -19,12 +19,12 @@ function toNode(id, title, author, pages) {
     bookNodeAuthorLabel.textContent = ' by ';
     bookNode.appendChild(bookNodeAuthorLabel);
     let bookNodeAuthorValue = document.createElement('input');
-    bookNodeAuthorValue.setAttribute('name', 'author');
+    bookNodeAuthorValue.setAttribute('class', 'author');
     bookNodeAuthorValue.defaultValue = author;
     bookNode.appendChild(bookNodeAuthorValue);
 
     let bookNodePagesValue = document.createElement('input');
-    bookNodePagesValue.setAttribute('name', 'pages');
+    bookNodePagesValue.setAttribute('class', 'pages');
     bookNodePagesValue.defaultValue = pages;
     bookNode.appendChild(bookNodePagesValue);
 
@@ -71,31 +71,31 @@ function createAddNewBookNode() {
 }
 
 function addBookToLibrary(event) {
-    book = event.target.parentNode;
-    title = book.querySelector('#newTitle').value;
-    author = book.querySelector('#newAuthor').value;
-    pages = parseInt(book.querySelector('#newPages').value);
-    isRead = false;
+    const book = event.target.parentNode;
+    const title = book.querySelector('#newTitle').value;
+    const author = book.querySelector('#newAuthor').value;
+    const pages = parseInt(book.querySelector('#newPages').value);
+    const isRead = false;
 
-    bookId = myLibraryRemote.push().key;
+    const bookId = myLibraryRemote.push().key;
     myLibraryRemote.child(bookId).set({
         author, title, pages, isRead
     });
 }
 
 myLibraryRemote.on('child_added', snapshot => {
-    book = snapshot.val();
-    bookId = snapshot.key;
-    bookNode = toNode(bookId, book.title, book.author, book.pages);
+    const book = snapshot.val();
+    const bookId = snapshot.key;
+    const bookNode = toNode(bookId, book.title, book.author, book.pages);
     bookShelf.appendChild(bookNode);
 })
 
 function updateBookInLibrary(event) {
-    book = event.target.parentNode;
-    title = book.querySelector('#newTitle').value;
-    author = book.querySelector('#newAuthor').value;
-    pages = parseInt(book.querySelector('#newPages').value);
-    isRead = false;
+    const book = event.target.parentNode;
+    const title = book.getElementsByClassName('title')[0].value;
+    const author = book.getElementsByClassName('author')[0].value;
+    const pages = parseInt(book.getElementsByClassName('pages')[0].value);
+    const isRead = false;
 
     myLibraryRemote.child(book.id).update({
         author, title, pages, isRead
@@ -103,20 +103,16 @@ function updateBookInLibrary(event) {
 }
 
 myLibraryRemote.on('child_changed', snapshot => {
-    book = snapshot.val();
-    bookId = snapshot.key;
-    bookNode = toNode(bookId, book.title, book.author, book.pages);
-    bookShelf.appendChild(bookNode);
 })
 
 function removeBookFromLibrary(event) {
-    book = event.target.parentNode;
+    const book = event.target.parentNode;
     myLibraryRemote.child(book.id).remove();
 }
 
 myLibraryRemote.on('child_removed', snapshot => {
-    book = snapshot.val();
-    bookId = snapshot.key;
-    bookToRemove = bookShelf.querySelector('#' + bookId);
+    const book = snapshot.val();
+    const bookId = snapshot.key;
+    const bookToRemove = bookShelf.querySelector('#' + bookId);
     bookShelf.removeChild(bookToRemove);
 })
