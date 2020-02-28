@@ -17,6 +17,7 @@ newBookNode.appendChild(newBookAuthor);
     const midSubContainer = document.createElement('div');
     midSubContainer.setAttribute('class', 'mid-sub-container');
         const newBookPages = document.createElement('input');
+        newBookPages.setAttribute('type', 'number');
         newBookPages.setAttribute('class', 'pages');
         newBookPages.placeholder = 'Total pages';
     midSubContainer.appendChild(newBookPages);
@@ -30,8 +31,15 @@ newBookNode.appendChild(newBookAuthor);
 newBookNode.appendChild(midSubContainer);
     const footerButtonContainer = document.createElement('div');
     footerButtonContainer.setAttribute('class', 'footer-buttons-container');
+        const newBookClear = document.createElement('button');
+        newBookClear.setAttribute('class', 'button');
+        newBookClear.setAttribute('type', 'reset');
+        newBookClear.textContent = 'Clear';
+        newBookClear.addEventListener('click', clearNewBookFields)
+    footerButtonContainer.appendChild(newBookClear);
         const newBookAdd = document.createElement('button');
         newBookAdd.setAttribute('class', 'button');
+        newBookAdd.setAttribute('type', 'submit');
         newBookAdd.textContent = 'Add';
         newBookAdd.addEventListener('click', addBookToLibrary)
     footerButtonContainer.appendChild(newBookAdd);
@@ -54,6 +62,7 @@ function createBookNode(id, title, author, pages, isRead) {
         const midSubContainer = document.createElement('div');
         midSubContainer.setAttribute('class', 'mid-sub-container');
             const bookNodePages = document.createElement('input');
+            bookNodePages.setAttribute('type', 'number');
             bookNodePages.setAttribute('class', 'pages');
             bookNodePages.value = pages;
         midSubContainer.appendChild(bookNodePages);
@@ -83,6 +92,13 @@ function createBookNode(id, title, author, pages, isRead) {
     return bookNode;
 }
 
+function clearNewBookFields() {
+    newBookTitle.value = '';
+    newBookAuthor.value = '';
+    newBookPages.value = '';
+    newBookIsRead.checked = false;
+}
+
 function addBookToLibrary(event) {
     const bookId = remoteBookShelf.push().key;
     remoteBookShelf.child(bookId).set({
@@ -96,13 +112,12 @@ function addBookToLibrary(event) {
 remoteBookShelf.on('child_added', snapshot => {
     const book = snapshot.val();
     const bookId = snapshot.key;
-    const bookNode = createBookNode(bookId, book.title, book.author, book.pages, book.isRead);
+    const bookNode = createBookNode(
+        bookId, book.title, book.author, book.pages, book.isRead
+    );
     bookShelf.appendChild(bookNode);
 
-    newBookTitle.value = '';
-    newBookAuthor.value = '';
-    newBookPages.value = '';
-    newBookIsRead.checked = false;
+    clearNewBookFields();
 })
 
 function updateBookInLibrary(event) {
