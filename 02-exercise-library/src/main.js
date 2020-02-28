@@ -39,7 +39,7 @@ newBookNode.appendChild(footerButtonContainer);
 
 bookShelf.appendChild(newBookNode)
 
-function toNode(id, title, author, pages, isRead) {
+function createBookNode(id, title, author, pages, isRead) {
     const bookNode = document.createElement('div');
     bookNode.setAttribute('class', 'book-template');
     bookNode.setAttribute('id', id);
@@ -96,7 +96,7 @@ function addBookToLibrary(event) {
 remoteBookShelf.on('child_added', snapshot => {
     const book = snapshot.val();
     const bookId = snapshot.key;
-    const bookNode = toNode(bookId, book.title, book.author, book.pages, book.isRead);
+    const bookNode = createBookNode(bookId, book.title, book.author, book.pages, book.isRead);
     bookShelf.appendChild(bookNode);
 
     newBookTitle.value = '';

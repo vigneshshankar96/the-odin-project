@@ -16,35 +16,31 @@ book-shelf {
 }
 
 .title {
-    width: auto;
     margin: 0px 10px;
 }
 
 .author {
-    width: auto;
     margin: 0px 10px;
 }
 
 .mid-sub-container {
     display: flex;
-    justify-content: space-around;
+    margin: 0px 10px;
+    justify-content: space-between;
     align-items: center;
-    height: 30px;
 }
 
 .pages {
-    width: 35%;
-    margin: 0px 5px;
+    width: 40%;
 }
 
 .footer-buttons-container {
     display: flex;
-    justify-content: space-around;
+    margin: 0px 10px;
+    justify-content: space-between;
     align-items: center;
-    height: 30px;
 }
 
 .button {
     width: 40%;
-    margin: 5px;
 }
