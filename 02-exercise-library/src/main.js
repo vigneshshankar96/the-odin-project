@@ -35,17 +35,17 @@ newBookNode.appendChild(midSubContainer);
         newBookClear.setAttribute('class', 'button');
         newBookClear.setAttribute('type', 'reset');
         newBookClear.textContent = 'Clear';
-        newBookClear.addEventListener('click', clearNewBookFields)
+        newBookClear.addEventListener('click', clearNewBookFields);
     footerButtonContainer.appendChild(newBookClear);
         const newBookAdd = document.createElement('button');
         newBookAdd.setAttribute('class', 'button');
         newBookAdd.setAttribute('type', 'submit');
         newBookAdd.textContent = 'Add';
-        newBookAdd.addEventListener('click', addBookToLibrary)
+        newBookAdd.addEventListener('click', addBookToLibrary);
     footerButtonContainer.appendChild(newBookAdd);
 newBookNode.appendChild(footerButtonContainer);
 
-bookShelf.appendChild(newBookNode)
+bookShelf.appendChild(newBookNode);
 
 function createBookNode(id, title, author, pages, isRead) {
     const bookNode = document.createElement('div');
