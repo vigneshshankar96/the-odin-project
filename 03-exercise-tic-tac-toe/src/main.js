@@ -1,34 +1,36 @@
 const gameBoard = (
     function() {
-        let activePlayers = [];
-        const maxPlayers = 2;
+        let playersList = [];
+        const MAX_PLAYERS = 2;
         let currentPlayer;
-        let winner = 0;
         let _array = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
+            [-1, -1, -1],
+            [-1, -1, -1],
+            [-1, -1, -1]
         ];
+
         const registerPlayer = function(player) {
-            if (activePlayers.length < maxPlayers) {
-                activePlayers.push(player);
-                player.symbol = activePlayers.length;
+            if (playersList.length < MAX_PLAYERS) {
+                player.symbol = playersList.push(player) - 1;
             }
-            if (activePlayers.length == maxPlayers) {
-                currentPlayer = activePlayers[Math.floor(Math.random() * maxPlayers)];
+            if (playersList.length == MAX_PLAYERS) {
+                // Choose a random player to make the first move
+                currentPlayer = playersList[Math.floor(Math.random() * MAX_PLAYERS)];
             }
         }
 
         const registerMove = function(player, row, column) {
             _array[row][column] = player.symbol;
-            winner = decideIfWinner(player);
-            const currentPlayerIndex = currentPlayer.symbol + 1 < maxPlayers ? currentPlayer.symbol + 1: maxPlayers - currentPlayer.symbol;
-            currentPlayer = activePlayers[currentPlayerIndex];
-            console.log('Next player ' + currentPlayer.getName())
+            isCurrentPlayerWinner = decideIfCurrentPlayerIsWinner();
+            if (!isCurrentPlayerWinner) {
+                const nextPlayerIndex = currentPlayer.symbol == MAX_PLAYERS - 1 ? 0 : currentPlayer.symbol + 1;
+                currentPlayer = playersList[nextPlayerIndex];
+                console.log('Next player ' + currentPlayer.getName())
+            }
         }
 
-        const decideIfWinner = function(player) {
-
+        const decideIfCurrentPlayerIsWinner = function() {
+            return false
         }
 
         const getArray = function() {
@@ -36,8 +38,9 @@ const gameBoard = (
         }
 
         const reset = function() {
-            activePlayers = [];
+            playersList = [];
         }
+
         return {registerPlayer,getArray, reset, registerMove}
     }
 )();
@@ -58,17 +61,17 @@ const Player = function(name) {
 
 gameBoard.reset();
 
+playerZero = Player('Player Zero');
 playerOne = Player('Player One');
-playerTwo = Player('Player Two');
 
+gameBoard.registerPlayer(playerZero);
 gameBoard.registerPlayer(playerOne);
-gameBoard.registerPlayer(playerTwo);
 
 console.log('Game board array: ' + JSON.stringify(gameBoard.getArray()));
 
-gameBoard.registerMove(playerOne, 0, 0);
-gameBoard.registerMove(playerTwo, 1, 1);
-gameBoard.registerMove(playerOne, 0, 1);
-gameBoard.registerMove(playerTwo, 1, 0);
+gameBoard.registerMove(playerZero, 0, 0);
+gameBoard.registerMove(playerOne, 1, 1);
+gameBoard.registerMove(playerZero, 0, 1);
+gameBoard.registerMove(playerOne, 1, 0);
 
 console.log('Game board array: ' + JSON.stringify(gameBoard.getArray()));
