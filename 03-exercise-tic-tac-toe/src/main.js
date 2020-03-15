@@ -1,9 +1,12 @@
 const gameBoard = (
     function() {
-        let playersList = [];
         const MAX_PLAYERS = 2;
+        const POS_MOVES_ID = -1;
+
+        let playersList = [];
         let currentPlayer;
-        let _array = [
+
+        const _array = [
             [-1, -1, -1],
             [-1, -1, -1],
             [-1, -1, -1]
@@ -11,43 +14,66 @@ const gameBoard = (
 
         const registerPlayer = function(player) {
             if (playersList.length < MAX_PLAYERS) {
-                player.symbol = playersList.push(player) - 1;
+                player.id = playersList.push(player) - 1;
             }
             if (playersList.length == MAX_PLAYERS) {
                 // Choose a random player to make the first move
                 currentPlayer = playersList[Math.floor(Math.random() * MAX_PLAYERS)];
             }
-        }
+        };
 
         const registerMove = function(player, row, column) {
-            _array[row][column] = player.symbol;
+            if (player.id !== currentPlayer.id) {
+                console.log('Wait for your turn: ' + player.getName());
+                return;
+            }
+            _array[row][column] = player.id;
             isCurrentPlayerWinner = decideIfCurrentPlayerIsWinner();
             if (!isCurrentPlayerWinner) {
-                const nextPlayerIndex = currentPlayer.symbol == MAX_PLAYERS - 1 ? 0 : currentPlayer.symbol + 1;
-                currentPlayer = playersList[nextPlayerIndex];
-                console.log('Next player ' + currentPlayer.getName())
+                const nextPlayerId = currentPlayer.id == MAX_PLAYERS - 1 ? 0 : currentPlayer.id + 1;
+                currentPlayer = playersList[nextPlayerId];
+                console.log('Next player: ' + currentPlayer.getName());
+                console.log('Possible moves: ' + JSON.stringify(getIndicesForId(POS_MOVES_ID)));
             }
-        }
+        };
 
         const decideIfCurrentPlayerIsWinner = function() {
-            return false
-        }
+            const indices = getIndicesForId(currentPlayer.id);
+            console.group('Current Player: ' + currentPlayer.getName());
+                console.log('ID: ' + currentPlayer.id);
+                console.log('Board: '+ JSON.stringify(gameBoard.getArray()));;
+                console.log('Found indices: ' + JSON.stringify(indices));
+            console.groupEnd();
+            return false;
+        };
+
+        const getIndicesForId = function(id) {
+            const indices = [];
+            for (row = 0; row <_array.length; row++) {
+                for (column = 0; column <_array[row].length; column++) {
+                    if (_array[row][column] === id) {
+                        indices.push([row, column]);
+                    }
+                }
+            }
+            return indices;
+        };
 
         const getArray = function() {
             return _array;
-        }
+        };
 
         const reset = function() {
             playersList = [];
-        }
+        };
 
-        return {registerPlayer,getArray, reset, registerMove}
+        return { registerPlayer,getArray, reset, registerMove };
     }
 )();
 
 const displayController = (
     function() {
-        return {}
+        return {};
     }
 )();
 
@@ -55,8 +81,8 @@ const Player = function(name) {
     const getName  = function() {
         return name;
     }
-    let symbol = -1;
-    return {getName, symbol}
+    const id = -1;
+    return { getName, id };
 };
 
 gameBoard.reset();
@@ -67,11 +93,7 @@ playerOne = Player('Player One');
 gameBoard.registerPlayer(playerZero);
 gameBoard.registerPlayer(playerOne);
 
-console.log('Game board array: ' + JSON.stringify(gameBoard.getArray()));
-
 gameBoard.registerMove(playerZero, 0, 0);
 gameBoard.registerMove(playerOne, 1, 1);
 gameBoard.registerMove(playerZero, 0, 1);
 gameBoard.registerMove(playerOne, 1, 0);
-
-console.log('Game board array: ' + JSON.stringify(gameBoard.getArray()));
