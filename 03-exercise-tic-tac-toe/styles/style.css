@@ -6,3 +6,12 @@
     margin: 5px;
     border: solid black 1px;
 }
+
+#restart-button {
+    border: solid 2px black;
+}
+
+.disable-click {
+    pointer-events:none;
+    opacity: 50%;
+}
