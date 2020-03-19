@@ -1,9 +1,9 @@
+
 const displayController = (
     function() {
-
         const gameBoardDOM = document.querySelector('game-board');
-        const gameStatus = document.querySelector('game-status-display');
-        const restartButton = document.querySelector('#restart-button');
+        const gameStatusDOM = document.querySelector('game-status-display');
+        const resetButtonDOM = document.querySelector('#reset-button');
 
         const disableInterface = function() {
             gameBoardDOM.classList.add('disable-click');
@@ -14,19 +14,15 @@ const displayController = (
         };
 
         const updateStatusDisplay = function(text) {
-            gameStatus.innerText = text;
+            gameStatusDOM.innerText = text;
         };
 
         const render = function() {
-
-            const _array = gameBoard.getArray();
-
             while (gameBoardDOM.firstChild) {
                 gameBoardDOM.removeChild(gameBoardDOM.lastChild);
             }
-
-            for (let row = 0; row < _array.length; row++) {
-                for (let column = 0; column < _array[row].length; column++) {
+            for (let row = 0; row < gameBoard.getState().length; row++) {
+                for (let column = 0; column < gameBoard.getState()[row].length; column++) {
                     const cell = document.createElement('div');
                     cell.setAttribute('class', 'cell');
                     cell.setAttribute('row', row);
@@ -39,21 +35,27 @@ const displayController = (
                             gameBoard.registerMove(currentPlayer, _row, _column);
                             event.target.style.backgroundColor = currentPlayer.color;
                         }
-                    })
+                    });
                     gameBoardDOM.appendChild(cell);
-                }
+                };
                 const cellBreak = document.createElement('br');
                 gameBoardDOM.appendChild(cellBreak);
             };
-
-            restartButton.addEventListener('click', function(event) {
+            resetButtonDOM.addEventListener('click', function(event) {
                 gameBoard.reset();
-                enableInterface();
-                updateStatusDisplay('');
-                render();
+                reset();
             })
         }
-        return { render, disableInterface, updateStatusDisplay };
+
+        const reset = function() {
+            enableInterface();
+            updateStatusDisplay(
+                gameBoard.getCurrentPlayer().getName() + '\'s turn'
+            );
+            render();
+        }
+
+        return { render, disableInterface, updateStatusDisplay, reset };
     }
 )();
 
@@ -64,8 +66,7 @@ const gameBoard = (
 
         let playersList = [];
         let currentPlayer;
-
-        let _array = [
+        let _state = [
             [-1, -1, -1],
             [-1, -1, -1],
             [-1, -1, -1]
@@ -74,75 +75,76 @@ const gameBoard = (
         const registerPlayer = function(player) {
             if (playersList.length < MAX_PLAYERS) {
                 player.id = playersList.push(player) - 1;
-            }
-            if (playersList.length == MAX_PLAYERS) {
-                assignRandomCurrentPlayer();
-            }
+            };
         };
 
         const assignRandomCurrentPlayer = function() {
-            currentPlayer = playersList[Math.floor(Math.random() * MAX_PLAYERS)];
+            currentPlayer = playersList[Math.floor(Math.random() * playersList.length)];
         };
 
         const registerMove = function(player, row, column) {
-            _array[row][column] = player.id;
+            _state[row][column] = player.id;
             if (checkIfWinner(currentPlayer)) {
                 displayController.disableInterface();
                 displayController.updateStatusDisplay(
                     currentPlayer.getName() + ' won!'
                 );
                 assignRandomCurrentPlayer();
+            } else if (!getIndicesForId(POS_MOVES_ID).length) {
+                displayController.disableInterface();
+                displayController.updateStatusDisplay(
+                    'It\'s a tie'
+                );
+                assignRandomCurrentPlayer();
             } else {
                 const nextPlayerId = currentPlayer.id == MAX_PLAYERS - 1 ? 0 : currentPlayer.id + 1;
                 currentPlayer = playersList[nextPlayerId];
-                console.log('Next player: ' + currentPlayer.getName());
-                console.log('Possible moves: ' + JSON.stringify(getIndicesForId(POS_MOVES_ID)));
+                displayController.updateStatusDisplay(
+                    currentPlayer.getName() + '\'s turn'
+                );
             }
         };
 
-        const checkIfWinner = function(currentPlayer) {
+        const checkIfWinner = function(player) {
             const winPossibilities = [
                 [0, 1, 2], [3, 4, 5], [6, 7, 8],    // Row wins
                 [0, 3, 6], [1, 4, 7], [2, 5, 8],    // Column wins
                 [0, 4, 8], [2, 4, 6]                // Diagonal wins
             ];
-
-            const flat_array = _array.flat(1);
-            // Check all possible winning combinations
+            const flat_array = _state.flat(1);
             for (i = 0; i < flat_array.length-1; i++) {
                 if (
-                    flat_array[winPossibilities[i][0]] === currentPlayer.id &&
-                    flat_array[winPossibilities[i][1]] === currentPlayer.id &&
-                    flat_array[winPossibilities[i][2]] === currentPlayer.id
+                    flat_array[winPossibilities[i][0]] === player.id &&
+                    flat_array[winPossibilities[i][1]] === player.id &&
+                    flat_array[winPossibilities[i][2]] === player.id
                 ) {
                     return true; 
-                }
-            }
+                };
+            };
             return false;
         };
 
         const getIndicesForId = function(id) {
             const indices = [];
-            for (row = 0; row < _array.length; row++) {
-                for (column = 0; column <_array[row].length; column++) {
-                    if (_array[row][column] === id) {
+            for (row = 0; row < _state.length; row++) {
+                for (column = 0; column < _state[row].length; column++) {
+                    if (_state[row][column] === id) {
                         indices.push([row, column]);
-                    }
-                }
-            }
+                    };
+                };
+            };
             return indices;
         };
 
         const checkIfValidMove = function(row, column) {
-            move = [row, column];
-            var move_as_string = JSON.stringify(move);
-            return getIndicesForId(POS_MOVES_ID).some(function(ele) {
-                return JSON.stringify(ele) === move_as_string;
+            const cell_as_string = JSON.stringify([row, column]);
+            return getIndicesForId(POS_MOVES_ID).some(function(cell) {
+                return JSON.stringify(cell) === cell_as_string;
             });
         };
 
-        const getArray = function() {
-            return _array;
+        const getState = function() {
+            return _state;
         };
 
         const getCurrentPlayer = function() {
@@ -150,27 +152,25 @@ const gameBoard = (
         };
 
         const reset = function() {
-            _array = [
+            _state = [
                 [-1, -1, -1],
                 [-1, -1, -1],
                 [-1, -1, -1]
             ];
+            assignRandomCurrentPlayer();
         };
 
-        return { registerPlayer, getArray, reset, registerMove, getCurrentPlayer, checkIfValidMove };
+        return { registerPlayer, getState, reset, registerMove, getCurrentPlayer, checkIfValidMove };
     }
 )();
 
 const Player = function(name, color) {
     const getName  = function() {
         return name;
-    }
+    };
     const id = -1;
     return { getName, id , color };
 };
-
-
-gameBoard.reset();
 
 playerZero = Player('Player Zero', 'green');
 playerOne = Player('Player One', 'red');
@@ -178,4 +178,5 @@ playerOne = Player('Player One', 'red');
 gameBoard.registerPlayer(playerZero);
 gameBoard.registerPlayer(playerOne);
 
-displayController.render();
+gameBoard.reset();
+displayController.reset();
