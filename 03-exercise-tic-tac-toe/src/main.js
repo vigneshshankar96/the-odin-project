@@ -1,7 +1,19 @@
 
+const Player = function(name, color) {
+    const getName  = function() {
+        return name;
+    };
+    const id = -1;
+    return { getName, id , color };
+};
+
+player0 = Player('Player 0', 'green');
+player1 = Player('Player 1', 'red');
+
 const displayController = (
     function() {
         const gameBoardDOM = document.querySelector('game-board');
+        const playersInfoDOM = document.querySelector('players-info');
         const gameStatusDOM = document.querySelector('game-status-display');
         const resetButtonDOM = document.querySelector('#reset-button');
 
@@ -38,9 +50,25 @@ const displayController = (
                     });
                     gameBoardDOM.appendChild(cell);
                 };
-                const cellBreak = document.createElement('br');
-                gameBoardDOM.appendChild(cellBreak);
+                const rowBreak = document.createElement('br');
+                gameBoardDOM.appendChild(rowBreak);
             };
+
+            while (playersInfoDOM.firstChild) {
+                playersInfoDOM.removeChild(playersInfoDOM.lastChild);
+            }
+            gameBoard.playersList.forEach(player = function(player) {
+                const playerInfoDOM = document.createElement('div');
+                    const playerNameLabel = document.createElement('label');
+                    playerNameLabel.innerText = ' Player ' + player.id ;
+                    const playerNameInput = document.createElement('input');
+                    playerNameInput.style.backgroundColor = player.color;
+                    playerNameInput.style.opacity = '75%';
+                    playersInfoDOM.appendChild(playerNameInput);
+                    playersInfoDOM.appendChild(playerNameLabel);
+                playersInfoDOM.appendChild(playerInfoDOM);
+            });
+
             resetButtonDOM.addEventListener('click', function(event) {
                 gameBoard.reset();
                 reset();
@@ -111,14 +139,14 @@ const gameBoard = (
                 [0, 3, 6], [1, 4, 7], [2, 5, 8],    // Column wins
                 [0, 4, 8], [2, 4, 6]                // Diagonal wins
             ];
-            const flat_array = _state.flat(1);
-            for (i = 0; i < flat_array.length-1; i++) {
+            const flatArray = _state.flat(1);
+            for (i = 0; i < flatArray.length-1; i++) {
                 if (
-                    flat_array[winPossibilities[i][0]] === player.id &&
-                    flat_array[winPossibilities[i][1]] === player.id &&
-                    flat_array[winPossibilities[i][2]] === player.id
+                    flatArray[winPossibilities[i][0]] === player.id &&
+                    flatArray[winPossibilities[i][1]] === player.id &&
+                    flatArray[winPossibilities[i][2]] === player.id
                 ) {
-                    return true; 
+                    return true;
                 };
             };
             return false;
@@ -160,23 +188,15 @@ const gameBoard = (
             assignRandomCurrentPlayer();
         };
 
-        return { registerPlayer, getState, reset, registerMove, getCurrentPlayer, checkIfValidMove };
+        return {
+            registerPlayer, getState, reset, registerMove,
+            getCurrentPlayer, checkIfValidMove, playersList
+        };
     }
 )();
 
-const Player = function(name, color) {
-    const getName  = function() {
-        return name;
-    };
-    const id = -1;
-    return { getName, id , color };
-};
-
-playerZero = Player('Player Zero', 'green');
-playerOne = Player('Player One', 'red');
-
-gameBoard.registerPlayer(playerZero);
-gameBoard.registerPlayer(playerOne);
+gameBoard.registerPlayer(player0);
+gameBoard.registerPlayer(player1);
 
 gameBoard.reset();
 displayController.reset();
