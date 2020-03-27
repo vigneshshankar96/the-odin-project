@@ -41,55 +41,75 @@ newBookNode.appendChild(midSubContainer);
         newBookAdd.setAttribute('class', 'button');
         newBookAdd.setAttribute('type', 'submit');
         newBookAdd.textContent = 'Add';
-        newBookAdd.addEventListener('click', addBookToLibrary);
+        newBookAdd.addEventListener('click', addBookToRemoteBookShelf);
     footerButtonContainer.appendChild(newBookAdd);
 newBookNode.appendChild(footerButtonContainer);
 
 bookShelf.appendChild(newBookNode);
 
-function createBookNode(id, title, author, pages, isRead) {
-    const bookNode = document.createElement('div');
-    bookNode.setAttribute('class', 'book-template');
-    bookNode.setAttribute('id', id);
-        const bookNodeTitle = document.createElement('input');
-        bookNodeTitle.setAttribute('class', 'title');
-        bookNodeTitle.value = title;
-    bookNode.appendChild(bookNodeTitle);
-        const bookNodeAuthor = document.createElement('input');
-        bookNodeAuthor.setAttribute('class', 'author');
-        bookNodeAuthor.value = author;
-    bookNode.appendChild(bookNodeAuthor);
-        const midSubContainer = document.createElement('div');
-        midSubContainer.setAttribute('class', 'mid-sub-container');
-            const bookNodePages = document.createElement('input');
-            bookNodePages.setAttribute('type', 'number');
-            bookNodePages.setAttribute('class', 'pages');
-            bookNodePages.value = pages;
-        midSubContainer.appendChild(bookNodePages);
-            const bookNodeIsRead = document.createElement('input');
-            bookNodeIsRead.setAttribute('type', 'checkbox');
-            bookNodeIsRead.setAttribute('class', 'isRead');
-            bookNodeIsRead.checked = isRead;
-        midSubContainer.appendChild(bookNodeIsRead);
-            const newBookIsReadLabel = document.createElement('label');
-            newBookIsReadLabel.innerText = 'Mark as read';
-        midSubContainer.appendChild(newBookIsReadLabel);
-    bookNode.appendChild(midSubContainer);
-        const footerButtonContainer = document.createElement('div');
-        footerButtonContainer.setAttribute('class', 'footer-buttons-container');
-            const bookNodeUpdate = document.createElement('button');
-            bookNodeUpdate.setAttribute('class', 'button');
-            bookNodeUpdate.textContent = 'Update';
-            bookNodeUpdate.addEventListener('click', updateBookInLibrary);
-        footerButtonContainer.appendChild(bookNodeUpdate);
-            const bookNodeRemove = document.createElement('button');
-            bookNodeRemove.setAttribute('class', 'button');
-            bookNodeRemove.textContent = 'Remove';
-            bookNodeRemove.addEventListener('click', removeBookFromLibrary);
-        footerButtonContainer.appendChild(bookNodeRemove);
-    bookNode.appendChild(footerButtonContainer);
+class Book {
+    #id;
+    #title;
+    #author;
+    #pages;
+    #isRead;
+    #bookNode;
 
-    return bookNode;
+    constructor(id, title, author, pages, isRead) {
+        this.#id = id;
+        this.#title = title;
+        this.#author = author;
+        this.#pages = pages;
+        this.#isRead = isRead;
+    }
+
+    createNode() {
+        this.#bookNode = document.createElement('div');
+        this.#bookNode.setAttribute('class', 'book-template');
+        this.#bookNode.setAttribute('id', this.#id);
+            const bookNodeTitle = document.createElement('input');
+            bookNodeTitle.setAttribute('class', 'title');
+            bookNodeTitle.value = this.#title;
+        this.#bookNode.appendChild(bookNodeTitle);
+            const bookNodeAuthor = document.createElement('input');
+            bookNodeAuthor.setAttribute('class', 'author');
+            bookNodeAuthor.value = this.#author;
+        this.#bookNode.appendChild(bookNodeAuthor);
+            const midSubContainer = document.createElement('div');
+            midSubContainer.setAttribute('class', 'mid-sub-container');
+                const bookNodePages = document.createElement('input');
+                bookNodePages.setAttribute('type', 'number');
+                bookNodePages.setAttribute('class', 'pages');
+                bookNodePages.value = this.#pages;
+            midSubContainer.appendChild(bookNodePages);
+                const bookNodeIsRead = document.createElement('input');
+                bookNodeIsRead.setAttribute('type', 'checkbox');
+                bookNodeIsRead.setAttribute('class', 'isRead');
+                bookNodeIsRead.checked = this.#isRead;
+            midSubContainer.appendChild(bookNodeIsRead);
+                const newBookIsReadLabel = document.createElement('label');
+                newBookIsReadLabel.innerText = 'Mark as read';
+            midSubContainer.appendChild(newBookIsReadLabel);
+        this.#bookNode.appendChild(midSubContainer);
+            const footerButtonContainer = document.createElement('div');
+            footerButtonContainer.setAttribute('class', 'footer-buttons-container');
+                const bookNodeUpdate = document.createElement('button');
+                bookNodeUpdate.setAttribute('class', 'button');
+                bookNodeUpdate.textContent = 'Update';
+                bookNodeUpdate.addEventListener('click', updateBookInRemoteBookShelf);
+            footerButtonContainer.appendChild(bookNodeUpdate);
+                const bookNodeRemove = document.createElement('button');
+                bookNodeRemove.setAttribute('class', 'button');
+                bookNodeRemove.textContent = 'Remove';
+                bookNodeRemove.addEventListener('click', removeBookFromRemoteBookShelf);
+            footerButtonContainer.appendChild(bookNodeRemove);
+        this.#bookNode.appendChild(footerButtonContainer);
+    }
+
+    get node() {
+        this.createNode();
+        return this.#bookNode;
+    }
 }
 
 function clearNewBookFields() {
@@ -99,7 +119,7 @@ function clearNewBookFields() {
     newBookIsRead.checked = false;
 }
 
-function addBookToLibrary(event) {
+function addBookToRemoteBookShelf(event) {
     const bookId = remoteBookShelf.push().key;
     remoteBookShelf.child(bookId).set({
         author: newBookAuthor.value,
@@ -112,15 +132,15 @@ function addBookToLibrary(event) {
 remoteBookShelf.on('child_added', snapshot => {
     const book = snapshot.val();
     const bookId = snapshot.key;
-    const bookNode = createBookNode(
+    const newBook = new Book(
         bookId, book.title, book.author, book.pages, book.isRead
     );
-    bookShelf.appendChild(bookNode);
+    bookShelf.appendChild(newBook.node);
 
     clearNewBookFields();
 })
 
-function updateBookInLibrary(event) {
+function updateBookInRemoteBookShelf(event) {
     const book = event.target.parentNode.parentNode;
         const title = book.querySelector('.title').value;
         const author = book.querySelector('.author').value;
@@ -141,7 +161,7 @@ remoteBookShelf.on('child_changed', snapshot => {
         bookToUpdate.querySelector('.pages').value = book.pages;
 })
 
-function removeBookFromLibrary(event) {
+function removeBookFromRemoteBookShelf(event) {
     const book = event.target.parentNode.parentNode;
     remoteBookShelf.child(book.id).remove();
 }
