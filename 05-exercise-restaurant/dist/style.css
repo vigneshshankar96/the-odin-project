@@ -1,8 +1,9 @@
 body {
   margin: 0px;
+  font-family: roboto,sans-serif;
 }
 
-ul {
+.navigation-bar {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -13,24 +14,72 @@ ul {
   overflow: auto; /* Enable scrolling if the sidenav has too much content */
 }
 
-li {
+nav-button {
   display: block;
   color: #000;
   padding: 8px 16px;
   text-decoration: none;
+  cursor: pointer;
+  user-select: none;
 }
 
-li.active {
-  background-color: #4CAF50;
+nav-button.active {
+  background-color: #5971b8;
   color: white;
 }
 
-li:hover:not(.active) {
+nav-button:hover:not(.active) {
   background-color: #555;
   color: white;
 }
 
+.sub-heading {
+  display: block;
+  color: white;
+  padding: 4px 8px;
+  text-decoration: none;
+  background-color: #5971b8;
+}
+
+.sub-text-container {
+  margin: 8px;
+}
+
 #content {
   margin-left: 200px;
-  padding: 8px;
+  padding: 20px;
+}
+
+a {
+  font-style: normal;
+  text-decoration: none;
+  color: #5971b8;
+}
+
+a:hover {
+  font-style: normal;
+  color: #0060B6;
+  cursor: pointer;
+}
+
+.home-container {
+  margin: -20px;
+  width: 100% + 20px;
+  background-color: #5971b8;
+  height: 100vh; /* Full height */
+  overflow: auto; /* Enable scrolling if the sidenav has too much content */
+}
+
+.home-page-banner {
+  color: white;
+  margin: 20px;
+  margin-left: 80px;
+}
+
+.home-page-text {
+  margin: 10% 5%;
+}
+
+.holds-the-iframe {
+  background:url(./assets/loader.gif) center center no-repeat;
 }
