@@ -20,16 +20,16 @@ const Datastore = (function() {
     const projectDatastore = firebaseDatabase.ref('/todoListDatastore/projectDatastore');
 
     function createTask(object) {
-        const taskId = taskDatastore.push().key;
-        taskDatastore.child(taskId).set(object);
+        const newTask = taskDatastore.push();
+        newTask.set(object);
         const response = {};
-        response[taskId] = object;
+        response[newTask.key] = object;
         return response;
     };
 
     function readAllTasks() {
         return taskDatastore.once('value');
-    }
+    };
 
     function updateTask(taskId, object) {
         taskDatastore.child(taskId).update(object);
@@ -43,16 +43,16 @@ const Datastore = (function() {
     };
 
     function createProject(object) {
-        const projectId = projectDatastore.push().key;
-        projectDatastore.child(projectId).set(object);
+        const newProject = projectDatastore.push();
+        newProject.set(object);
         const response = {};
-        response[projectId] = object;
+        response[newProject.key] = object;
         return response;
     };
 
     function readAllProjects() {
         return projectDatastore.once('value');
-    }
+    };
 
     function updateProject(projectId, object) {
         projectDatastore.child(projectId).update(object);
@@ -67,7 +67,7 @@ const Datastore = (function() {
 
     return {
         createTask, readAllTasks, updateTask, deleteTask,
-        createProject, updateProject, deleteProject
+        createProject, readAllProjects, updateProject, deleteProject
     };
 })();
 

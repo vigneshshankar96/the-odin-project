@@ -1,0 +1,63 @@
+const DomController = (function() {
+    const mainContainer = document.createElement('div');
+        const leftPane = document.createElement('div');
+            const projectsList = document.createElement('div');
+        const middlePane = document.createElement('div');
+            const currentProject = document.createElement('div');
+            const taskFilters = document.createElement('div');
+                const pendingTasksFilter = document.createElement('div');
+                const completedTasksFilter = document.createElement('div');
+            const tasksList = document.createElement('div');
+        const rightPane = document.createElement('div');
+            const taskDescription = document.createElement('div');
+            const updateTaskButton = document.createElement('div');
+
+    const render = function() {
+        mainContainer.style.height = '95vh';
+        mainContainer.style.display = 'flex';
+        mainContainer.style.justifyContent = 'space-around';
+            leftPane.style.width = '22.5vw';
+            leftPane.innerText = 'My Projects';
+                projectsList.style.border = '1px solid black';
+                projectsList.style.display = 'flex';
+                projectsList.style.flexDirection = 'column';
+            leftPane.appendChild(projectsList);
+        mainContainer.appendChild(leftPane);
+            middlePane.style.width = '22.55vw';
+                currentProject.innerText = 'Active Project Title';
+            middlePane.appendChild(currentProject);
+                taskFilters.style.display = 'flex';
+                taskFilters.style.justifyContent = 'space-around';
+                    pendingTasksFilter.innerText = 'Pending';
+                    pendingTasksFilter.style.border = '1px solid black';
+                    pendingTasksFilter.style.padding = '5px';
+                    pendingTasksFilter.style.borderRadius = '9999px';
+                taskFilters.appendChild(pendingTasksFilter);
+                    completedTasksFilter.style.border = '1px solid black';
+                    completedTasksFilter.style.borderRadius = '9999px';
+                    completedTasksFilter.style.padding = '5px';
+                    completedTasksFilter.innerText = 'Completed';
+                taskFilters.appendChild(completedTasksFilter);
+            middlePane.appendChild(taskFilters);
+                tasksList.style.border = '1px solid black';
+                tasksList.style.display = 'flex';
+                tasksList.style.flexDirection = 'column';
+            middlePane.appendChild(tasksList);
+        mainContainer.appendChild(middlePane);
+            rightPane.style.width = '50vw';
+            rightPane.innerText = 'Individual Task';
+                taskDescription.style.border = '1px solid black';
+                taskDescription.style.height = '65vh';
+            rightPane.appendChild(taskDescription);
+                updateTaskButton.style.border = '1px solid black';
+                updateTaskButton.style.height = '7.5vh';
+                updateTaskButton.style.width = '22.5vw';
+                updateTaskButton.style.margin = 'auto';
+            rightPane.appendChild(updateTaskButton);
+        mainContainer.appendChild(rightPane);
+        return mainContainer;
+    }
+    return { render };
+})();
+
+export { DomController };
