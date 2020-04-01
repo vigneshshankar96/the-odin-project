@@ -1,17 +1,21 @@
 import { Datastore } from "./firebase-datastore";
 
-const response = Datastore.createTask({
+let allTasks = {};
+
+const task = {
     'title': 'Task #1: Title',
     'description': 'Task #1: Description',
     'dueDate': 'Task #1: Due Data',
     'priority': 'Task #1: Priority'
-})
+}
+const response = Datastore.createTask(task)
+console.log(response);
 
-Datastore.readTask().then(function(snapshot) {
-    var values = snapshot.val();
-    console.log(values);
+Datastore.readAllTasks().then(function(snapshot) {
+    allTasks = snapshot.val();
+    console.log(allTasks);
 });
 
-Datastore.createTaskList({
+Datastore.createProject({
     'title': 'Task List #1: Title'
 });

@@ -17,59 +17,58 @@ firebase.initializeApp(firebaseConfig);
 const Datastore = (function() {
     const firebaseDatabase = firebase.database();
     const taskDatastore = firebaseDatabase.ref('/todoListDatastore/taskDatastore');
-    const taskListDatastore = firebaseDatabase.ref('/todoListDatastore/taskListDatastore');
+    const projectDatastore = firebaseDatabase.ref('/todoListDatastore/projectDatastore');
 
     function createTask(object) {
-        const id = taskDatastore.push().key;
-        taskDatastore.child(id).set({
-            object
-        });
+        const taskId = taskDatastore.push().key;
+        taskDatastore.child(taskId).set(object);
         const response = {};
-        response[id] = object;
+        response[taskId] = object;
         return response;
     };
 
-    function readTask() {
-        return taskListDatastore.once('value');
+    function readAllTasks() {
+        return taskDatastore.once('value');
     }
 
-    function updateTask(id, object) {
-        taskDatastore.child(id).update({
-            object
-        });
+    function updateTask(taskId, object) {
+        taskDatastore.child(taskId).update(object);
         const response = {};
-        response[id] = object;
+        response[taskId] = object;
         return response;
     };
 
-    function deleteTask(id) {
-        taskDatastore.child(id).remove();
+    function deleteTask(taskId) {
+        taskDatastore.child(taskId).remove();
     };
 
-    function createTaskList(object) {
-        const id = taskListDatastore.push().key;
-        taskListDatastore.child(id).set({
-            object
-        });
+    function createProject(object) {
+        const projectId = projectDatastore.push().key;
+        projectDatastore.child(projectId).set(object);
         const response = {};
-        response[id] = object;
+        response[projectId] = object;
         return response;
     };
 
-    function updateTaskList(id, object) {
-        taskListDatastore.child(id).update({
-            object
-        });
+    function readAllProjects() {
+        return projectDatastore.once('value');
+    }
+
+    function updateProject(projectId, object) {
+        projectDatastore.child(projectId).update(object);
         const response = {};
-        response[id] = object;
+        response[projectId] = object;
         return response;
     };
 
-    function deleteTaskList(id) {
-        taskListDatastore.child(id).remove();
+    function deleteProject(projectId) {
+        projectDatastore.child(projectId).remove();
     };
 
-    return { createTask, readTask, updateTask, deleteTask, createTaskList, updateTaskList, deleteTaskList };
+    return {
+        createTask, readAllTasks, updateTask, deleteTask,
+        createProject, updateProject, deleteProject
+    };
 })();
 
 export { Datastore };
