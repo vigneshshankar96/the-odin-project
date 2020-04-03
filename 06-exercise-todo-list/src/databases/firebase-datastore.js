@@ -22,20 +22,17 @@ const Datastore = (function() {
     function createTask(object) {
         const newTask = taskDatastore.push();
         newTask.set(object);
-        const response = {};
-        response[newTask.key] = object;
-        return response;
+        object.id = newTask.key;
+        return object;
     };
 
     function readAllTasks() {
         return taskDatastore.once('value');
     };
 
-    function updateTask(taskId, object) {
-        taskDatastore.child(taskId).update(object);
-        const response = {};
-        response[taskId] = object;
-        return response;
+    function updateTask(object) {
+        taskDatastore.child(object.id).update(object);
+        return object;
     };
 
     function deleteTask(taskId) {
@@ -45,20 +42,17 @@ const Datastore = (function() {
     function createProject(object) {
         const newProject = projectDatastore.push();
         newProject.set(object);
-        const response = {};
-        response[newProject.key] = object;
-        return response;
+        object.id = newProject.key;
+        return object;
     };
 
     function readAllProjects() {
         return projectDatastore.once('value');
     };
 
-    function updateProject(projectId, object) {
-        projectDatastore.child(projectId).update(object);
-        const response = {};
-        response[projectId] = object;
-        return response;
+    function updateProject(object) {
+        projectDatastore.child(object.id).update(object);
+        return object;
     };
 
     function deleteProject(projectId) {
