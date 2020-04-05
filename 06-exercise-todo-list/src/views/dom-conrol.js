@@ -3,7 +3,7 @@ import { Datastore } from "./../databases/local-datastore";
 const DomController = (function() {
     const mainContainer = document.createElement('div');
         const leftPane = document.createElement('div');
-            const projectsList = document.createElement('div');
+            const projectDOMList = document.createElement('div');
                 const showAllTasks = document.createElement('div');
                 const addNewProject = document.createElement('div');
                     const addNewProjectText = document.createElement('span');
@@ -13,7 +13,7 @@ const DomController = (function() {
             const taskFilters = document.createElement('div');
                 const pendingTasksFilter = document.createElement('div');
                 const completedTasksFilter = document.createElement('div');
-            const tasksList = document.createElement('div');
+            const taskDOMList = document.createElement('div');
                 const addNewTask = document.createElement('div');
                     const addNewTaskText = document.createElement('span');
                     const addNewTaskButton = document.createElement('span');
@@ -27,12 +27,12 @@ const DomController = (function() {
         mainContainer.style.justifyContent = 'space-around';
             leftPane.style.width = '25vw';
             leftPane.innerText = 'My Projects';
-                projectsList.style.border = '1px solid black';
-                projectsList.style.display = 'flex';
-                projectsList.style.flexDirection = 'column';
+                projectDOMList.style.border = '1px solid black';
+                projectDOMList.style.display = 'flex';
+                projectDOMList.style.flexDirection = 'column';
                     showAllTasks.innerText = 'All Tasks';
                     showAllTasks.style.border = '1px solid black';
-                projectsList.appendChild(showAllTasks);
+                projectDOMList.appendChild(showAllTasks);
                     addNewProject.style.border = '1px solid black';
                         addNewProjectText.innerText = 'New Project';
                         addNewProjectButton.innerText = '+';
@@ -40,8 +40,8 @@ const DomController = (function() {
                         addNewProjectButton.style.borderRadius = '50%';
                     addNewProject.appendChild(addNewProjectText);
                     addNewProject.appendChild(addNewProjectButton);
-                projectsList.appendChild(addNewProject);
-            leftPane.appendChild(projectsList);
+                projectDOMList.appendChild(addNewProject);
+            leftPane.appendChild(projectDOMList);
         mainContainer.appendChild(leftPane);
             middlePane.style.width = '25vw';
                 currentProject.innerText = '<< Active Project Title >>';
@@ -59,9 +59,9 @@ const DomController = (function() {
                     completedTasksFilter.innerText = 'Completed';
                 taskFilters.appendChild(completedTasksFilter);
             middlePane.appendChild(taskFilters);
-                tasksList.style.border = '1px solid black';
-                tasksList.style.display = 'flex';
-                tasksList.style.flexDirection = 'column';
+                taskDOMList.style.border = '1px solid black';
+                taskDOMList.style.display = 'flex';
+                taskDOMList.style.flexDirection = 'column';
                     addNewTask.style.border = '1px solid black';
                         addNewTaskText.innerText = 'New Task';
                         addNewTaskButton.innerText = '+';
@@ -69,8 +69,8 @@ const DomController = (function() {
                         addNewTaskButton.style.borderRadius = '50%';
                     addNewTask.appendChild(addNewTaskText);
                     addNewTask.appendChild(addNewTaskButton);
-                tasksList.appendChild(addNewTask);
-            middlePane.appendChild(tasksList);
+                taskDOMList.appendChild(addNewTask);
+            middlePane.appendChild(taskDOMList);
         mainContainer.appendChild(middlePane);
             rightPane.style.width = '45vw';
                 taskDescription.style.border = '1px solid black';
@@ -85,86 +85,105 @@ const DomController = (function() {
             rightPane.appendChild(updateTaskButton);
         mainContainer.appendChild(rightPane);
         return mainContainer;
-    }
+    };
 
-    const addToProjectsList = function(newProject) {
-        const newProjectDOM = document.createElement('div');
-            const newProjectDOMText = document.createElement('span');
+    const convertProjectObjectToDOM = function(projectObject) {
+        const projectDOM = document.createElement('div');
+            const projectDOMTitle = document.createElement('span');
             const deleteProjectButton = document.createElement('span');
-        newProjectDOM.id = newProject.id;
-            newProjectDOMText.innerText = newProject.title;
-        newProjectDOM.appendChild(newProjectDOMText);
+        projectDOM.id = projectObject.id;
+            projectDOMTitle.innerText = projectObject.title;
+        projectDOM.appendChild(projectDOMTitle);
             deleteProjectButton.innerText = 'x';
             deleteProjectButton.style.border = '1px solid black';
             deleteProjectButton.style.borderRadius = '50%';
             deleteProjectButton.addEventListener('click', function(event) {
-                deleteFromProjectsList(newProject.id);
+                deleteFromProjectDOMList(projectDOM.id);
+                Datastore.deleteProject(projectObject.id);
             })
-        newProjectDOM.appendChild(deleteProjectButton);
-        newProjectDOM.style.border = '1px solid black';
-        projectsList.insertBefore(newProjectDOM, projectsList.lastChild);
+        projectDOM.appendChild(deleteProjectButton);
+        projectDOM.style.border = '1px solid black';
+        return projectDOM;
     };
 
-    const deleteFromProjectsList = function(projectId) {
+    const addToProjectDOMList = function(projectDOM) {
+        projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
+    };
+
+    const deleteFromProjectDOMList = function(projectId) {
         const projectDOM = document.getElementById(projectId);
         projectDOM.parentNode.removeChild(projectDOM);
-        Datastore.deleteProject(projectId);
     };
 
-    const addToTasksList = function(newTask) {
-        const newTaskDOM = document.createElement('div');
-            const newTaskCompleted = document.createElement('input');
-            const newTaskDOMText = document.createElement('span');
+    const convertTaskObjectToDOM = function(taskObject) {
+        const taskDOM = document.createElement('div');
+            const taskDOMCompleted = document.createElement('input');
+            const taskDOMTitle = document.createElement('span');
             const deleteTaskButton = document.createElement('span');
-        newTaskDOM.id = newTask.id;
-            newTaskCompleted.type = 'checkbox';
-            newTaskCompleted.checked = newTask.completed;
-        newTaskDOM.appendChild(newTaskCompleted);
-            newTaskDOMText.innerText = newTask.title;
-        newTaskDOM.appendChild(newTaskDOMText);
+        taskDOM.id = taskObject.id;
+            taskDOMCompleted.type = 'checkbox';
+            taskDOMCompleted.checked = taskObject.completed;
+            taskDOMCompleted.addEventListener('click', function(event) {
+                taskObject.completed = taskDOMCompleted.checked;
+                Datastore.updateTask(taskObject);
+            });
+        taskDOM.appendChild(taskDOMCompleted);
+            taskDOMTitle.innerText = taskObject.title;
+        taskDOM.appendChild(taskDOMTitle);
             deleteTaskButton.innerText = 'x';
             deleteTaskButton.style.border = '1px solid black';
             deleteTaskButton.style.borderRadius = '50%';
             deleteTaskButton.addEventListener('click', function(event) {
-                deleteFromTasksList(newTask.id);
+                deleteFromTaskDOMList(taskDOM.id);
+                Datastore.deleteTask(taskObject.id);
             });
-        newTaskDOM.appendChild(deleteTaskButton);
-        newTaskDOM.style.border = '1px solid black';
-        tasksList.insertBefore(newTaskDOM, tasksList.lastChild);
+        taskDOM.appendChild(deleteTaskButton);
+        taskDOM.style.border = '1px solid black';
+        return taskDOM;
     };
 
-    const deleteFromTasksList = function(taskId) {
+    const addToTaskDOMList = function(taskDOM) {
+        taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
+    };
+
+    const deleteFromTaskDOMList = function(taskId) {
         const taskDOM = document.getElementById(taskId);
         taskDOM.parentNode.removeChild(taskDOM);
-        Datastore.deleteTask(taskId);
     };
 
-    return { render, addToProjectsList, addToTasksList };
+    return {
+        render, convertTaskObjectToDOM, addToTaskDOMList,
+        convertProjectObjectToDOM, addToProjectDOMList
+    };
 })();
 
-const content = document.querySelector('#content');
+const content = document.getElementById('content');
 content.appendChild(DomController.render());
 
-Datastore.readAllProjects().forEach(project => {
-    DomController.addToProjectsList(project);
+Datastore.readAllProjects().forEach(projectObject => {
+    const projectDOM = DomController.convertProjectObjectToDOM(projectObject);
+    DomController.addToProjectDOMList(projectDOM);
 });
-Datastore.readAllTasks().forEach(task => {
-    DomController.addToTasksList(task);
+Datastore.readAllTasks().forEach(taskObject => {
+    const taskDOM = DomController.convertTaskObjectToDOM(taskObject);
+    DomController.addToTaskDOMList(taskDOM);
 });
 
-const newProject = Datastore.createProject({
+const newProjectObject = Datastore.createProject({
     'title': 'Personal'
 });
-DomController.addToProjectsList(newProject);
+const newProjectDOM = DomController.convertProjectObjectToDOM(newProjectObject);
+DomController.addToProjectDOMList(newProjectDOM);
 
-const newTask = Datastore.createTask({
+const newTaskObject = Datastore.createTask({
     'description': 'Use GPay to complete the payment for FEB 2020',
     'dueDate': '08 MAR 2020',
     'completed': false,
     'priority': 'High',
-    'projectId': newProject.id,
+    'projectId': newProjectObject.id,
     'title': 'Pay Electricity bill'
 });
-DomController.addToTasksList(newTask);
+const newTaskDOM = DomController.convertTaskObjectToDOM(newTaskObject);
+DomController.addToTaskDOMList(newTaskDOM);
 
 export { DomController };

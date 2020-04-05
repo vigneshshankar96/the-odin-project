@@ -45,7 +45,7 @@ class LocalStorage {
 
 const Datastore = (function() {
     const localStorage = new LocalStorage();
-    localStorage.clearTodoListDatastore();
+    // localStorage.clearTodoListDatastore();
 
     const _generateUUID = function() {
         return 'xxyxxxy'.replace(/[xy]/g, function(c) {
