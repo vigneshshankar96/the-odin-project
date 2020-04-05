@@ -6,41 +6,41 @@ class LocalStorage {
         this.emptyTodoListDatastore = {
             taskDatastore: [],
             projectDatastore: []
-        }
-    }
+        };
+    };
 
     clearTodoListDatastore() {
         this.todoListDatastore = this.emptyTodoListDatastore;
-    }
+    };
 
     get todoListDatastore() {
         return store.get('todoListDatastore') || this.emptyTodoListDatastore;
-    }
+    };
 
     set todoListDatastore(value) {
         store.set('todoListDatastore', value);
-    }
+    };
 
     get taskDatastore() {
         return this.todoListDatastore.taskDatastore;
-    }
+    };
 
     set taskDatastore(value) {
         const _todoListDatastore = this.todoListDatastore;
         _todoListDatastore.taskDatastore = value;
         this.todoListDatastore = _todoListDatastore;
-    }
+    };
 
     get projectDatastore() {
         return this.todoListDatastore.projectDatastore;
-    }
+    };
 
     set projectDatastore(value) {
         const _todoListDatastore = this.todoListDatastore;
         _todoListDatastore.projectDatastore = value;
         this.todoListDatastore = _todoListDatastore;
-    }
-}
+    };
+};
 
 
 const Datastore = (function() {
@@ -52,7 +52,7 @@ const Datastore = (function() {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
-    }
+    };
 
     function createTask(object) {
         object.id = _generateUUID();
@@ -71,16 +71,18 @@ const Datastore = (function() {
         const _taskDatastore = localStorage.taskDatastore;
         const objectIndex = _taskDatastore.findIndex((
             _object => _object.id === taskId
-        ))
-        _taskDatastore[objectIndex] = object;
+        ));
+        _taskDatastore[objectIndex] = Object.assign(_taskDatastore[objectIndex], object);
         localStorage.taskDatastore = _taskDatastore;
         return object;
     };
 
     function deleteTask(taskId) {
+        console.log(localStorage.taskDatastore);  
         localStorage.taskDatastore = localStorage.taskDatastore.filter((
             _object => _object.id !== taskId
         ));
+        console.log(localStorage.taskDatastore);  
     };
 
     function createProject(object) {
@@ -100,8 +102,8 @@ const Datastore = (function() {
         const _projectDatastore = localStorage.projectDatastore;
         const objectIndex = _projectDatastore.findIndex((
             _object => _object.id === projectId
-        ))
-        _projectDatastore[objectIndex] = object;
+        ));
+        _projectDatastore[objectIndex] = Object.assign(_projectDatastore[objectIndex], object);
         localStorage.projectDatastore = _projectDatastore;
         return object;
     };
