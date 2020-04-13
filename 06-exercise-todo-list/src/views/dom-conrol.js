@@ -45,8 +45,15 @@ const DomController = (function() {
                 projectDOMList.style.border = '1px solid black';
                 projectDOMList.style.display = 'flex';
                 projectDOMList.style.flexDirection = 'column';
+                    showAllTasks.classList.add('active-project');
                     showAllTasks.innerText = 'All Tasks';
                     showAllTasks.style.border = '1px solid black';
+                    showAllTasks.addEventListener('click', function(event) {
+                        filterTasksByProject('all');
+                        const current = document.getElementsByClassName('active-project');
+                        current[0].classList.remove('active-project');
+                        this.classList.add('active-project');
+                    })
                 projectDOMList.appendChild(showAllTasks);
                     addNewProject.style.border = '1px solid black';
                         addNewProjectText.innerText = 'New Project';
@@ -150,6 +157,8 @@ const DomController = (function() {
             const projectDOMTitle = document.createElement('span');
             const deleteProjectButton = document.createElement('span');
         projectDOM.id = projectObject.id;
+        projectDOM.classList.add('project');
+        projectDOM.style.border = '1px solid black';
             projectDOMTitle.innerText = projectObject.title;
         projectDOM.appendChild(projectDOMTitle);
             deleteProjectButton.innerText = 'x';
@@ -160,7 +169,12 @@ const DomController = (function() {
                 Datastore.deleteProject(projectObject.id);
             })
         projectDOM.appendChild(deleteProjectButton);
-        projectDOM.style.border = '1px solid black';
+        projectDOM.addEventListener('click', function(event) {
+            filterTasksByProject(projectObject.id);
+            const current = document.getElementsByClassName('active-project');
+            current[0].classList.remove('active-project');
+            this.classList.add('active-project');
+        })
         return projectDOM;
     };
 
@@ -179,6 +193,9 @@ const DomController = (function() {
             const taskDOMTitle = document.createElement('span');
             const deleteTaskButton = document.createElement('span');
         taskDOM.id = taskObject.id;
+        taskDOM.classList.add('task');
+        taskDOM.classList.add(taskObject.projectId);
+        taskDOM.style.border = '1px solid black';
             taskDOMCompleted.type = 'checkbox';
             taskDOMCompleted.checked = taskObject.completed;
             taskDOMCompleted.addEventListener('click', function(event) {
@@ -196,7 +213,6 @@ const DomController = (function() {
                 Datastore.deleteTask(taskObject.id);
             });
         taskDOM.appendChild(deleteTaskButton);
-        taskDOM.style.border = '1px solid black';
         return taskDOM;
     };
 
@@ -209,9 +225,30 @@ const DomController = (function() {
         taskDOM.parentNode.removeChild(taskDOM);
     };
 
+    function filterTasksByProject(className) {
+        const tasks = document.getElementsByClassName('task');
+        if (className == 'all') className = '';
+        // Add the 'show-task' class (display:block) to the filtered elements, and remove the 'show-task' class from the elements that are not selected
+        for (var i = 0; i < tasks.length; i++) {
+            removeClass(tasks[i], 'show-task');
+            if (tasks[i].className.indexOf(className) > -1) addClass(tasks[i], 'show-task');
+        }
+    }
+
+    // Show filtered elements
+    function addClass(element, className) {
+        element.classList.add(className);
+    };
+
+    // Hide elements that are not selected
+    function removeClass(element, className) {
+        element.classList.remove(className);
+    };
+
     return {
         render, convertTaskObjectToDOM, addToTaskDOMList,
-        convertProjectObjectToDOM, addToProjectDOMList
+        convertProjectObjectToDOM, addToProjectDOMList,
+        filterTasksByProject
     };
 })();
 

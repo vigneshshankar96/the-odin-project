@@ -54,63 +54,59 @@ const Datastore = (function() {
         });
     };
 
-    function createTask(object) {
-        object.id = _generateUUID();
+    function createTask(taskObject) {
+        taskObject.id = _generateUUID();
         const _taskDatastore = localStorage.taskDatastore;
-        _taskDatastore.push(object);
+        _taskDatastore.push(taskObject);
         localStorage.taskDatastore = _taskDatastore;
-        return object;
+        return taskObject;
     };
 
     function readAllTasks() {
         return localStorage.taskDatastore;
     };
 
-    function updateTask(object) {
-        const taskId = object.id;
+    function updateTask(taskObject) {
         const _taskDatastore = localStorage.taskDatastore;
-        const objectIndex = _taskDatastore.findIndex((
-            _object => _object.id === taskId
+        const taskObjectIndex = _taskDatastore.findIndex((
+            _taskObject => _taskObject.id === taskObject.id
         ));
-        _taskDatastore[objectIndex] = Object.assign(_taskDatastore[objectIndex], object);
+        _taskDatastore[taskObjectIndex] = Object.assign(_taskDatastore[taskObjectIndex], taskObject);
         localStorage.taskDatastore = _taskDatastore;
-        return object;
+        return taskObject;
     };
 
     function deleteTask(taskId) {
-        console.log(localStorage.taskDatastore);  
         localStorage.taskDatastore = localStorage.taskDatastore.filter((
-            _object => _object.id !== taskId
+            _taskObject => _taskObject.id !== taskId
         ));
-        console.log(localStorage.taskDatastore);  
     };
 
-    function createProject(object) {
-        object.id = _generateUUID();
+    function createProject(projectObject) {
+        projectObject.id = _generateUUID();
         const _projectDatastore = localStorage.projectDatastore;
-        _projectDatastore.push(object);
+        _projectDatastore.push(projectObject);
         localStorage.projectDatastore = _projectDatastore;
-        return object;
+        return projectObject;
     };
 
     function readAllProjects() {
         return localStorage.projectDatastore;
     };
 
-    function updateProject(object) {
-        const projectId = object.id;
+    function updateProject(projectObject) {
         const _projectDatastore = localStorage.projectDatastore;
-        const objectIndex = _projectDatastore.findIndex((
-            _object => _object.id === projectId
+        const projectObjectIndex = _projectDatastore.findIndex((
+            _projectObject => _projectObject.id === projectObject.id
         ));
-        _projectDatastore[objectIndex] = Object.assign(_projectDatastore[objectIndex], object);
+        _projectDatastore[projectObjectIndex] = Object.assign(_projectDatastore[projectObjectIndex], projectObject);
         localStorage.projectDatastore = _projectDatastore;
-        return object;
+        return projectObject;
     };
 
     function deleteProject(projectId) {
         localStorage.projectDatastore = localStorage.projectDatastore.filter((
-            _object => _object.id !== projectId
+            _projectObject => _projectObject.id !== projectId
         ));
     };
 

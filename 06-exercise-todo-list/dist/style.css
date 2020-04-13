@@ -1,0 +1,15 @@
+.task {
+    display: none;
+}
+
+.show-task {
+    display: block;
+}
+
+.project {
+
+}
+
+.active-project {
+    background-color: aquamarine;
+}
