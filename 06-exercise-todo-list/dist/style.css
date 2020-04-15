@@ -2,14 +2,18 @@
     display: none;
 }
 
-.show-task {
-    display: block;
-}
-
 .project {
 
 }
 
+.show-task {
+    display: block;
+}
+
 .active-project {
     background-color: aquamarine;
+}
+
+.active-tasks-filter {
+    background-color: aquamarine;    
 }

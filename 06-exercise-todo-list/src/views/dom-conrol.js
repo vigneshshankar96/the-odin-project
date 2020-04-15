@@ -5,14 +5,15 @@ const DomController = (function() {
         const leftPane = document.createElement('div');
             const projectDOMList = document.createElement('div');
                 const showAllTasks = document.createElement('div');
+                    const showAllTasksTitle = document.createElement('span');
                 const addNewProject = document.createElement('div');
                     const addNewProjectText = document.createElement('span');
                     const addNewProjectButton = document.createElement('span');
         const middlePane = document.createElement('div');
-            const currentProject = document.createElement('div');
+            const currentProjectTitle = document.createElement('div');
             const taskFilters = document.createElement('div');
-                const pendingTasksFilter = document.createElement('div');
-                const completedTasksFilter = document.createElement('div');
+                const showPendingTasksButton = document.createElement('div');
+                const showCompletedTasksButton = document.createElement('div');
             const taskDOMList = document.createElement('div');
                 const addNewTask = document.createElement('div');
                     const addNewTaskText = document.createElement('span');
@@ -45,16 +46,20 @@ const DomController = (function() {
                 projectDOMList.style.border = '1px solid black';
                 projectDOMList.style.display = 'flex';
                 projectDOMList.style.flexDirection = 'column';
+                    showAllTasks.style.cursor = 'pointer';
                     showAllTasks.classList.add('active-project');
-                    showAllTasks.innerText = 'All Tasks';
+                        showAllTasksTitle.innerText = 'All Tasks';
+                    showAllTasks.appendChild(showAllTasksTitle);
                     showAllTasks.style.border = '1px solid black';
                     showAllTasks.addEventListener('click', function(event) {
-                        filterTasksByProject('all');
-                        const current = document.getElementsByClassName('active-project');
-                        current[0].classList.remove('active-project');
-                        this.classList.add('active-project');
-                    })
+                        const activeProject = document.querySelector('.active-project');
+                        activeProject.classList.remove('active-project');
+                        showAllTasks.classList.add('active-project');
+                        refreshTaskDOMList();
+                        currentProjectTitle.innerText = 'All Tasks';
+                    });
                 projectDOMList.appendChild(showAllTasks);
+                    addNewProject.style.cursor = 'pointer';
                     addNewProject.style.border = '1px solid black';
                         addNewProjectText.innerText = 'New Project';
                         addNewProjectButton.innerText = '+';
@@ -66,32 +71,48 @@ const DomController = (function() {
             leftPane.appendChild(projectDOMList);
         mainContainer.appendChild(leftPane);
             middlePane.style.width = '25vw';
-                currentProject.innerText = '<< Active Project Title >>';
-            middlePane.appendChild(currentProject);
+                currentProjectTitle.innerText = 'All Tasks';
+            middlePane.appendChild(currentProjectTitle);
                 taskFilters.style.display = 'flex';
                 taskFilters.style.justifyContent = 'space-around';
-                    pendingTasksFilter.style.border = '1px solid black';
-                    pendingTasksFilter.style.borderRadius = '9999px';
-                    pendingTasksFilter.style.fontSize = '12.5px';
-                    pendingTasksFilter.style.padding = '2.5px';
-                    pendingTasksFilter.innerText = 'Pending';
-                taskFilters.appendChild(pendingTasksFilter);
-                    completedTasksFilter.style.border = '1px solid black';
-                    completedTasksFilter.style.borderRadius = '9999px';
-                    completedTasksFilter.style.fontSize = '12.5px';
-                    completedTasksFilter.style.padding = '2.5px';
-                    completedTasksFilter.innerText = 'Completed';
-                taskFilters.appendChild(completedTasksFilter);
+                    showPendingTasksButton.style.border = '1px solid black';
+                    showPendingTasksButton.style.borderRadius = '9999px';
+                    showPendingTasksButton.style.fontSize = '11.25px';
+                    showPendingTasksButton.style.textAlign = 'center';
+                    showPendingTasksButton.style.padding = '2.5px';
+                    showPendingTasksButton.style.cursor = 'pointer';
+                    showPendingTasksButton.style.userSelect = 'none';
+                    showPendingTasksButton.innerText = 'Show pending tasks';
+                    showPendingTasksButton.classList.add('active-tasks-filter');
+                    showPendingTasksButton.addEventListener('click', function(event) {
+                        showPendingTasksButton.classList.toggle('active-tasks-filter');
+                        refreshTaskDOMList();
+                    });
+                taskFilters.appendChild(showPendingTasksButton);
+                    showCompletedTasksButton.style.border = '1px solid black';
+                    showCompletedTasksButton.style.borderRadius = '9999px';
+                    showCompletedTasksButton.style.fontSize = '11.25px';
+                    showCompletedTasksButton.style.textAlign = 'center';
+                    showCompletedTasksButton.style.padding = '2.5px';
+                    showCompletedTasksButton.style.cursor = 'pointer';
+                    showCompletedTasksButton.style.userSelect = 'none';
+                    showCompletedTasksButton.innerText = 'Show completed tasks';
+                    showCompletedTasksButton.classList.add('active-tasks-filter');
+                    showCompletedTasksButton.addEventListener('click', function(event) {
+                        showCompletedTasksButton.classList.toggle('active-tasks-filter');
+                        refreshTaskDOMList();
+                    });
+                taskFilters.appendChild(showCompletedTasksButton);
             middlePane.appendChild(taskFilters);
                 taskDOMList.style.border = '1px solid black';
                 taskDOMList.style.display = 'flex';
                 taskDOMList.style.flexDirection = 'column';
                     addNewTask.style.border = '1px solid black';
                         addNewTaskText.innerText = 'New Task';
+                    addNewTask.appendChild(addNewTaskText);
                         addNewTaskButton.innerText = '+';
                         addNewTaskButton.style.border = '1px solid black';
                         addNewTaskButton.style.borderRadius = '50%';
-                    addNewTask.appendChild(addNewTaskText);
                     addNewTask.appendChild(addNewTaskButton);
                 taskDOMList.appendChild(addNewTask);
             middlePane.appendChild(taskDOMList);
@@ -156,25 +177,31 @@ const DomController = (function() {
         const projectDOM = document.createElement('div');
             const projectDOMTitle = document.createElement('span');
             const deleteProjectButton = document.createElement('span');
-        projectDOM.id = projectObject.id;
         projectDOM.classList.add('project');
+        projectDOM.style.cursor = 'pointer';
         projectDOM.style.border = '1px solid black';
+        projectDOM.id = projectObject.id;
             projectDOMTitle.innerText = projectObject.title;
         projectDOM.appendChild(projectDOMTitle);
             deleteProjectButton.innerText = 'x';
             deleteProjectButton.style.border = '1px solid black';
             deleteProjectButton.style.borderRadius = '50%';
             deleteProjectButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                if (projectDOM.classList.contains('active-project')) {
+                    showAllTasks.classList.add('active-project');
+                };
                 deleteFromProjectDOMList(projectDOM.id);
                 Datastore.deleteProject(projectObject.id);
-            })
+            });
         projectDOM.appendChild(deleteProjectButton);
         projectDOM.addEventListener('click', function(event) {
-            filterTasksByProject(projectObject.id);
-            const current = document.getElementsByClassName('active-project');
-            current[0].classList.remove('active-project');
-            this.classList.add('active-project');
-        })
+            const activeProject = document.querySelector('.active-project');
+            activeProject.classList.remove('active-project');
+            projectDOM.classList.add('active-project');
+            currentProjectTitle.innerText = projectObject.title;
+            refreshTaskDOMList();
+        });
         return projectDOM;
     };
 
@@ -192,15 +219,17 @@ const DomController = (function() {
             const taskDOMCompleted = document.createElement('input');
             const taskDOMTitle = document.createElement('span');
             const deleteTaskButton = document.createElement('span');
-        taskDOM.id = taskObject.id;
-        taskDOM.classList.add('task');
         taskDOM.classList.add(taskObject.projectId);
+        taskDOM.classList.add('task');
+        taskDOM.style.cursor = 'pointer';
         taskDOM.style.border = '1px solid black';
+        taskDOM.id = taskObject.id;
             taskDOMCompleted.type = 'checkbox';
             taskDOMCompleted.checked = taskObject.completed;
             taskDOMCompleted.addEventListener('click', function(event) {
                 taskObject.completed = taskDOMCompleted.checked;
                 Datastore.updateTask(taskObject);
+                refreshTaskDOMList();
             });
         taskDOM.appendChild(taskDOMCompleted);
             taskDOMTitle.innerText = taskObject.title;
@@ -209,6 +238,7 @@ const DomController = (function() {
             deleteTaskButton.style.border = '1px solid black';
             deleteTaskButton.style.borderRadius = '50%';
             deleteTaskButton.addEventListener('click', function(event) {
+                event.stopPropagation();
                 deleteFromTaskDOMList(taskDOM.id);
                 Datastore.deleteTask(taskObject.id);
             });
@@ -225,15 +255,29 @@ const DomController = (function() {
         taskDOM.parentNode.removeChild(taskDOM);
     };
 
-    function filterTasksByProject(className) {
+    function refreshTaskDOMList() {
+        const activeProject = document.querySelector('.active-project');
+        const activeProjectTitle = activeProject.firstChild.innerText;
+        const activeProjectId = (activeProjectTitle !== 'All Tasks') ?  activeProject.id : ''
+
+        const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
+        const showCompletedTasks = showCompletedTasksButton.classList.contains('active-tasks-filter');
+
         const tasks = document.getElementsByClassName('task');
-        if (className == 'all') className = '';
-        // Add the 'show-task' class (display:block) to the filtered elements, and remove the 'show-task' class from the elements that are not selected
+        // Add the 'show-task' class to the filtered elements, and remove the 'show-task' class from the elements that are not selected
         for (var i = 0; i < tasks.length; i++) {
             removeClass(tasks[i], 'show-task');
-            if (tasks[i].className.indexOf(className) > -1) addClass(tasks[i], 'show-task');
-        }
-    }
+            if (tasks[i].className.indexOf(activeProjectId) > -1) {
+                const isTaskCompleted = tasks[i].querySelector('input').checked;
+                if (showPendingTasks && !isTaskCompleted) {
+                    addClass(tasks[i], 'show-task');
+                };
+                if (showCompletedTasks && isTaskCompleted) {
+                    addClass(tasks[i], 'show-task');
+                };
+            };
+        };
+    };
 
     // Show filtered elements
     function addClass(element, className) {
@@ -248,7 +292,7 @@ const DomController = (function() {
     return {
         render, convertTaskObjectToDOM, addToTaskDOMList,
         convertProjectObjectToDOM, addToProjectDOMList,
-        filterTasksByProject
+        refreshTaskDOMList
     };
 })();
 
