@@ -43,7 +43,8 @@ const DomController = (function() {
         mainContainer.style.justifyContent = 'space-around';
             leftPane.style.width = '25vw';
             leftPane.innerText = 'My Projects';
-                projectDOMList.style.border = '1px solid black';
+                projectDOMList.style.height = '92.5vh';
+                projectDOMList.style.overflow = 'overlay';
                 projectDOMList.style.display = 'flex';
                 projectDOMList.style.flexDirection = 'column';
                     showAllTasks.style.cursor = 'pointer';
@@ -104,7 +105,8 @@ const DomController = (function() {
                     });
                 taskFilters.appendChild(showCompletedTasksButton);
             middlePane.appendChild(taskFilters);
-                taskDOMList.style.border = '1px solid black';
+                taskDOMList.style.height = '90vh';
+                taskDOMList.style.overflow = 'overlay';
                 taskDOMList.style.display = 'flex';
                 taskDOMList.style.flexDirection = 'column';
                     addNewTask.style.border = '1px solid black';
