@@ -2,106 +2,16 @@ import { Datastore } from './../databases/local-datastore';
 
 const DomController = (function() {
 
-    const createLineBreak = function() {
+    const _createLineBreak = function() {
         return document.createElement('br');
     };
 
-    const createProjectViewerElement = function() {
-        const projectViewer = document.createElement('form');
-            const projectViewerTitleLabel = document.createElement('label');
-            const projectViewerTitle = document.createElement('input');
-            const updateProjectButton = document.createElement('input');
-        projectViewer.style.display = 'flex';
-        projectViewer.style.flexDirection = 'column';
-        projectViewer.style.alignItems = 'center';
-            projectViewerTitleLabel.for = 'taskTitle';
-            projectViewerTitleLabel.innerText = 'Title';
-        projectViewer.appendChild(projectViewerTitleLabel);
-            projectViewerTitle.type = 'text';
-            projectViewerTitle.id = 'taskTitle';
-            projectViewerTitle.name = 'taskTitle';
-        projectViewer.appendChild(projectViewerTitle);
-        projectViewer.appendChild(createLineBreak());
-            updateProjectButton.type = 'submit';
-            updateProjectButton.style.border = '1px solid black';
-            updateProjectButton.innerText = 'Update';
-            updateProjectButton.style.width = '45%';
-            updateProjectButton.style.margin = 'auto';
-        projectViewer.appendChild(createLineBreak());
-        projectViewer.appendChild(updateProjectButton);
-        return projectViewer;
-    };
-
-    const createTaskViewerElement = function() {
-        const taskViewer = document.createElement('form');
-            const taskViewerTitleLabel = document.createElement('label');
-            const taskViewerTitle = document.createElement('input');
-            const taskViewerDescriptionLabel = document.createElement('label');
-            const taskViewerDescription = document.createElement('textarea');
-            const taskViewerPriorityLabel = document.createElement('label');
-            const taskViewerPriority = document.createElement('select');
-                const lowTaskPriority = document.createElement('option');
-                const mediumTaskPriority = document.createElement('option');
-                const highTaskPriority = document.createElement('option');
-            const taskViewerDueDateLabel = document.createElement('label');
-            const taskViewerDueDate = document.createElement('input');
-            const updateTaskButton = document.createElement('input');
-        taskViewer.style.display = 'flex';
-        taskViewer.style.flexDirection = 'column';
-        taskViewer.style.alignItems = 'center';
-            taskViewerTitleLabel.for = 'taskTitle';
-            taskViewerTitleLabel.innerText = 'Title';
-        taskViewer.appendChild(taskViewerTitleLabel);
-            taskViewerTitle.type = 'text';
-            taskViewerTitle.id = 'taskTitle';
-            taskViewerTitle.name = 'taskTitle';
-        taskViewer.appendChild(taskViewerTitle);
-        taskViewer.appendChild(createLineBreak());
-            taskViewerDescriptionLabel.for = 'taskDescription';
-            taskViewerDescriptionLabel.innerText = 'Description';
-        taskViewer.appendChild(taskViewerDescriptionLabel);
-            taskViewerDescription.id = 'taskDescription';
-            taskViewerDescription.name = 'taskDescription';
-        taskViewer.appendChild(taskViewerDescription);
-        taskViewer.appendChild(createLineBreak());
-            taskViewerPriorityLabel.for = 'taskPriority';
-            taskViewerPriorityLabel.innerText = 'Priority';
-        taskViewer.appendChild(taskViewerPriorityLabel);
-            taskViewerPriority.id = 'taskPriority';
-            taskViewerPriority.name = 'taskPriority';
-                lowTaskPriority.value = 'Low';
-                lowTaskPriority.innerText = 'Low';
-            taskViewerPriority.appendChild(lowTaskPriority);
-                mediumTaskPriority.value = 'Medium';
-                mediumTaskPriority.innerText = 'Medium';
-            taskViewerPriority.appendChild(mediumTaskPriority);
-                highTaskPriority.value = 'High';
-                highTaskPriority.innerText = 'High';
-            taskViewerPriority.appendChild(highTaskPriority);
-        taskViewer.appendChild(taskViewerPriority);
-            taskViewerDueDateLabel.for = 'taskDueDate';
-            taskViewerDueDateLabel.innerText = 'Due Date';
-        taskViewer.appendChild(createLineBreak());
-        taskViewer.appendChild(taskViewerDueDateLabel);
-            taskViewerDueDate.type = 'date';
-            taskViewerDueDate.id = 'taskDueDate';
-            taskViewerDueDate.name = 'taskDueDate';
-        taskViewer.appendChild(taskViewerDueDate);
-            updateTaskButton.type = 'submit';
-            updateTaskButton.style.border = '1px solid black';
-            updateTaskButton.innerText = 'Update';
-            updateTaskButton.style.width = '45%';
-            updateTaskButton.style.margin = 'auto';
-        taskViewer.appendChild(createLineBreak());
-        taskViewer.appendChild(updateTaskButton);
-        return taskViewer;
-    };
-
-    const createModalElement = function(id, content) {
+    const createModalElement = function(id) {
         const modal = document.createElement('div');
             const modalContainer = document.createElement('div');
                 const modalCloseButton = document.createElement('span');
                 const modalContent = document.createElement('div');
+
         modal.id = id;
         modal.style.display = 'none'; // Hidden by default
         modal.style.position = 'fixed'; // Stay in place
@@ -137,11 +47,6 @@ const DomController = (function() {
                 });
             modalContainer.appendChild(modalCloseButton);
                 modalContent.id = id + '-content';
-                if (typeof content !== 'undefined') {
-                    modalContent.appendChild(content);
-                } else {
-                    modalContent.innerText = id;
-                }
             modalContainer.appendChild(modalContent);
         modal.appendChild(modalContainer);
         return modal;
@@ -169,14 +74,14 @@ const DomController = (function() {
         mainContainer.style.height = '95vh';
         mainContainer.style.display = 'flex';
         mainContainer.style.justifyContent = 'space-around';
-            leftPane.style.width = '25vw';
+            leftPane.style.width = '40vw';
             leftPane.innerText = 'My Projects';
                 projectDOMList.id = 'project-dom-list';
                 projectDOMList.style.height = '92.5vh';
                 projectDOMList.style.overflow = 'overlay';
                 projectDOMList.style.display = 'flex';
                 projectDOMList.style.flexDirection = 'column';
-                    showAllTasks.id = 'show-all-tasks';
+                    showAllTasks.id = 'all-tasks';
                     showAllTasks.style.cursor = 'pointer';
                     showAllTasks.classList.add('active-project');
                         showAllTasksTitle.innerText = 'All Tasks';
@@ -200,12 +105,17 @@ const DomController = (function() {
                     addNewProject.appendChild(addNewProjectButton);
                     addNewProject.addEventListener('click', function(event) {
                         const projectModal = document.querySelector('#project-modal');
+                        const projectModalContent = projectModal.querySelector('#project-modal-content');
+                        while (projectModalContent.hasChildNodes()) {
+                            projectModalContent.removeChild(projectModalContent.firstChild);
+                        };
+                        projectModalContent.appendChild(_convertProjectObjectToView());
                         projectModal.style.display = 'block';
                     });
                 projectDOMList.appendChild(addNewProject);
             leftPane.appendChild(projectDOMList);
         mainContainer.appendChild(leftPane);
-            rightPane.style.width = '25vw';
+            rightPane.style.width = '40vw';
                 currentProjectTitle.id = 'current-project-title';
                 currentProjectTitle.innerText = 'All Tasks';
             rightPane.appendChild(currentProjectTitle);
@@ -255,6 +165,11 @@ const DomController = (function() {
                     addNewTask.appendChild(addNewTaskButton);
                     addNewTask.addEventListener('click', function(event) {
                         const taskModal = document.querySelector('#task-modal');
+                        const taskModalContent = taskModal.querySelector('#task-modal-content');
+                        while (taskModalContent.hasChildNodes()) {
+                            taskModalContent.removeChild(taskModalContent.firstChild);
+                        };
+                        taskModalContent.appendChild(_convertTaskObjectToView());
                         taskModal.style.display = 'block';
                     });
                 taskDOMList.appendChild(addNewTask);
@@ -268,6 +183,7 @@ const DomController = (function() {
             const projectDOMTitle = document.createElement('span');
             const editProjectButton = document.createElement('span');
             const deleteProjectButton = document.createElement('span');
+
         projectDOM.classList.add('project');
         projectDOM.style.cursor = 'pointer';
         projectDOM.style.border = '1px solid black';
@@ -277,6 +193,11 @@ const DomController = (function() {
             editProjectButton.innerText = '✎';
             editProjectButton.addEventListener('click', function(event) {
                 const projectModal = document.querySelector('#project-modal');
+                const projectModalContent = projectModal.querySelector('#project-modal-content');
+                while (projectModalContent.hasChildNodes()) {
+                   projectModalContent.removeChild(projectModalContent.firstChild);
+                };
+                projectModalContent.appendChild(_convertProjectObjectToView(projectObject));
                 projectModal.style.display = 'block';
             });
         projectDOM.appendChild(editProjectButton);
@@ -286,10 +207,10 @@ const DomController = (function() {
             deleteProjectButton.addEventListener('click', function(event) {
                 event.stopPropagation();
                 if (projectDOM.classList.contains('active-project')) {
-                    const showAllTasks = document.querySelector('#show-all-tasks');
+                    const showAllTasks = document.querySelector('#all-tasks');
                     showAllTasks.classList.add('active-project');
                 };
-                deleteFromProjectDOMList(projectDOM.id);
+                _deleteFromProjectDOMList(projectDOM.id);
                 Datastore.deleteProject(projectObject.id);
             });
         projectDOM.appendChild(deleteProjectButton);
@@ -310,10 +231,57 @@ const DomController = (function() {
         refreshTaskDOMList();
     };
 
-    const deleteFromProjectDOMList = function(projectId) {
+    const _deleteFromProjectDOMList = function(projectId) {
         const projectDOM = document.getElementById(projectId);
         projectDOM.parentNode.removeChild(projectDOM);
         refreshTaskDOMList();
+    };
+
+    const _convertProjectObjectToView = function(projectObject) {
+        let isProjectBeingNewlyCreated = false;
+        if (typeof projectObject === 'undefined') {
+            isProjectBeingNewlyCreated = true;
+            projectObject = {
+                'title': ''
+            };
+        };
+
+        const projectView = document.createElement('form');
+            const projectViewTitleLabel = document.createElement('label');
+            const projectViewTitle = document.createElement('input');
+            const updateProjectButton = document.createElement('input');
+
+        projectView.style.display = 'flex';
+        projectView.style.flexDirection = 'column';
+        projectView.style.alignItems = 'center';
+            projectViewTitleLabel.for = 'projectTitle';
+            projectViewTitleLabel.innerText = 'Title';
+        projectView.appendChild(projectViewTitleLabel);
+        projectView.appendChild(_createLineBreak());
+            projectViewTitle.type = 'text';
+            projectViewTitle.name = 'projectTitle';
+            projectViewTitle.value = projectObject.title;
+        projectView.appendChild(projectViewTitle);
+        projectView.appendChild(_createLineBreak());
+            updateProjectButton.type = 'submit';
+            updateProjectButton.style.border = '1px solid black';
+            updateProjectButton.value = 'Update';
+            if (isProjectBeingNewlyCreated) {
+                updateProjectButton.value = 'Create';
+            };
+            updateProjectButton.style.width = '45%';
+            updateProjectButton.style.margin = 'auto';
+            updateProjectButton.addEventListener('click', function(event) {
+                projectObject.title = projectViewTitle.value;
+                if (isProjectBeingNewlyCreated) {
+                    Datastore.createProject(projectObject);
+                } else {
+                    Datastore.updateProject(projectObject);                    
+                };
+                refreshTaskDOMList();
+            })
+        projectView.appendChild(updateProjectButton);
+        return projectView;
     };
 
     const convertTaskObjectToDOM = function(taskObject) {
@@ -322,6 +290,7 @@ const DomController = (function() {
             const taskDOMTitle = document.createElement('span');
             const editTaskButton = document.createElement('span');
             const deleteTaskButton = document.createElement('span');
+
         taskDOM.classList.add(taskObject.projectId);
         taskDOM.classList.add('task');
         taskDOM.style.cursor = 'pointer';
@@ -340,6 +309,11 @@ const DomController = (function() {
             editTaskButton.innerText = '✎';
             editTaskButton.addEventListener('click', function(event) {
                 const taskModal = document.querySelector('#task-modal');
+                const taskModalContent = taskModal.querySelector('#task-modal-content');
+                while (taskModalContent.hasChildNodes()) {
+                   taskModalContent.removeChild(taskModalContent.firstChild);
+                };
+                taskModalContent.appendChild(_convertTaskObjectToView(taskObject));
                 taskModal.style.display = 'block';
             });
         taskDOM.appendChild(editTaskButton);
@@ -348,7 +322,7 @@ const DomController = (function() {
             deleteTaskButton.innerText = '×';
             deleteTaskButton.addEventListener('click', function(event) {
                 event.stopPropagation();
-                deleteFromTaskDOMList(taskDOM.id);
+                _deleteFromTaskDOMList(taskDOM.id);
                 Datastore.deleteTask(taskObject.id);
             });
         taskDOM.appendChild(deleteTaskButton);
@@ -357,45 +331,142 @@ const DomController = (function() {
 
     const addToTaskDOMList = function(taskDOM) {
         const taskDOMList = document.querySelector('#task-dom-list');
+
         taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
         refreshTaskDOMList();
     };
 
-    const deleteFromTaskDOMList = function(taskId) {
+    const _deleteFromTaskDOMList = function(taskId) {
         const taskDOM = document.getElementById(taskId);
+
         taskDOM.parentNode.removeChild(taskDOM);
         refreshTaskDOMList();
     };
 
+    const _convertTaskObjectToView = function(taskObject) {
+        let isTaskBeingNewlyCreated = false;
+        if (typeof taskObject === 'undefined') {
+            isTaskBeingNewlyCreated = true;
+            const activeProject = document.querySelector('.active-project');
+            const activeProjectId = (activeProject.id !== 'all-tasks') ? activeProject.id : '';
+            taskObject = {
+                'description': '',
+                'dueDate': '',
+                'completed': false,
+                'priority': 'Low',
+                'projectId': (activeProjectId !== '') ? activeProjectId : 'project-id-unassigned',
+                'title': ''
+            };
+        };
+
+        const taskView = document.createElement('form');
+            const taskViewTitleLabel = document.createElement('label');
+            const taskViewTitle = document.createElement('input');
+            const taskViewDescriptionLabel = document.createElement('label');
+            const taskViewDescription = document.createElement('textarea');
+            const taskViewPriorityLabel = document.createElement('label');
+            const taskViewPriority = document.createElement('select');
+                const lowTaskPriority = document.createElement('option');
+                const mediumTaskPriority = document.createElement('option');
+                const highTaskPriority = document.createElement('option');
+            const taskViewDueDateLabel = document.createElement('label');
+            const taskViewDueDate = document.createElement('input');
+            const updateTaskButton = document.createElement('input');
+
+        taskView.style.display = 'flex';
+        taskView.style.flexDirection = 'column';
+        taskView.style.alignItems = 'center';
+            taskViewTitleLabel.for = 'taskTitle';
+            taskViewTitleLabel.innerText = 'Title';
+        taskView.appendChild(taskViewTitleLabel);
+            taskViewTitle.type = 'text';
+            taskViewTitle.name = 'taskTitle';
+            taskViewTitle.value = taskObject.title;
+        taskView.appendChild(taskViewTitle);
+        taskView.appendChild(_createLineBreak());
+            taskViewDescriptionLabel.for = 'taskDescription';
+            taskViewDescriptionLabel.innerText = 'Description';
+        taskView.appendChild(taskViewDescriptionLabel);
+            taskViewDescription.name = 'taskDescription';
+            taskViewDescription.defaultValue = taskObject.description;
+        taskView.appendChild(taskViewDescription);
+        taskView.appendChild(_createLineBreak());
+            taskViewPriorityLabel.for = 'taskPriority';
+            taskViewPriorityLabel.innerText = 'Priority';
+        taskView.appendChild(taskViewPriorityLabel);
+            taskViewPriority.name = 'taskPriority';
+                lowTaskPriority.value = 'Low';
+                lowTaskPriority.innerText = 'Low';
+            taskViewPriority.appendChild(lowTaskPriority);
+                mediumTaskPriority.value = 'Medium';
+                mediumTaskPriority.innerText = 'Medium';
+            taskViewPriority.appendChild(mediumTaskPriority);
+                highTaskPriority.value = 'High';
+                highTaskPriority.innerText = 'High';
+            taskViewPriority.appendChild(highTaskPriority);
+            taskViewPriority.value = taskObject.priority;
+        taskView.appendChild(taskViewPriority);
+        taskView.appendChild(_createLineBreak());
+            taskViewDueDateLabel.for = 'taskDueDate';
+            taskViewDueDateLabel.innerText = 'Due Date';
+        taskView.appendChild(taskViewDueDateLabel);
+            taskViewDueDate.type = 'date';
+            taskViewDueDate.name = 'taskDueDate';
+            taskViewDueDate.value = taskObject.dueDate;
+        taskView.appendChild(taskViewDueDate);
+        taskView.appendChild(_createLineBreak());
+            updateTaskButton.type = 'submit';
+            updateTaskButton.style.border = '1px solid black';
+            updateTaskButton.value = 'Update';
+            if (isTaskBeingNewlyCreated) {
+                updateTaskButton.value = 'Create';
+            };
+            updateTaskButton.style.width = '45%';
+            updateTaskButton.style.margin = 'auto';
+            updateTaskButton.addEventListener('click', function(event) {
+                taskObject.title = taskViewTitle.value;
+                taskObject.description = taskViewDescription.value;
+                taskObject.priority = taskViewPriority.value;
+                taskObject.dueDate = taskViewDueDate.value;
+                if (isTaskBeingNewlyCreated) {
+                    Datastore.createTask(taskObject);
+                } else {
+                    Datastore.updateTask(taskObject);                    
+                };
+                refreshTaskDOMList();
+            });
+        taskView.appendChild(updateTaskButton);
+        return taskView;
+    };
+
     function refreshTaskDOMList() {
         const activeProject = document.querySelector('.active-project');
-        const activeProjectTitle = activeProject.firstChild.innerText;
-        const activeProjectId = (activeProjectTitle !== 'All Tasks') ?  activeProject.id : ''
+        const activeProjectId = (activeProject.id !== 'all-tasks') ? activeProject.id : '';
 
         const showPendingTasksButton = document.querySelector('#show-pending-tasks-button');
         const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
-        var pendingTasksCount = 0;
+        let pendingTasksCount = 0;
 
         const showCompletedTasksButton = document.querySelector('#show-completed-tasks-button');
         const showCompletedTasks = showCompletedTasksButton.classList.contains('active-tasks-filter');
-        var completedTasksCount = 0;
+        let completedTasksCount = 0;
 
         const tasks = document.getElementsByClassName('task');
         // Add the 'show-task' class to the filtered elements, and remove the 'show-task' class from the elements that are not selected
-        for (var i = 0; i < tasks.length; i++) {
-            removeClass(tasks[i], 'show-task');
+        for (let i = 0; i < tasks.length; i++) {
+            tasks[i].classList.remove('show-task');
             if (tasks[i].className.indexOf(activeProjectId) > -1) {
                 const isTaskCompleted = tasks[i].querySelector('input').checked;
                 if (!isTaskCompleted) {
                     pendingTasksCount++;
                     if (showPendingTasks) {
-                        addClass(tasks[i], 'show-task');
+                        tasks[i].classList.add('show-task');
                     };
                 };
                 if (isTaskCompleted) {
                     completedTasksCount++;
                     if (showCompletedTasks) {
-                        addClass(tasks[i], 'show-task');
+                        tasks[i].classList.add('show-task');
                     };
                 };
             };
@@ -404,20 +475,10 @@ const DomController = (function() {
         showCompletedTasksButton.innerText = 'Completed tasks (' + completedTasksCount + ')';
     };
 
-    // Show filtered elements
-    function addClass(element, className) {
-        element.classList.add(className);
-    };
-
-    // Hide elements that are not selected
-    function removeClass(element, className) {
-        element.classList.remove(className);
-    };
-
     return {
-        createMainContainerElement, createModalElement,
-        convertProjectObjectToDOM, addToProjectDOMList, createProjectViewerElement,
-        convertTaskObjectToDOM, addToTaskDOMList, createTaskViewerElement, refreshTaskDOMList
+        createMainContainerElement, createModalElement, refreshTaskDOMList,
+        convertProjectObjectToDOM, addToProjectDOMList,
+        convertTaskObjectToDOM, addToTaskDOMList
     };
 })();
 
