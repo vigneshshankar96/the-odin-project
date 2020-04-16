@@ -14,8 +14,6 @@ Datastore.readAllTasks().forEach(taskObject => {
     DomController.addToTaskDOMList(taskDOM);
 });
 
-DomController.refreshTaskDOMList();
-
 const newProjectObject = Datastore.createProject({
     'title': 'Personal'
 });

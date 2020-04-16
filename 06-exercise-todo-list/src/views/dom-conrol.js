@@ -209,11 +209,13 @@ const DomController = (function() {
 
     const addToProjectDOMList = function(projectDOM) {
         projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
+        refreshTaskDOMList();
     };
 
     const deleteFromProjectDOMList = function(projectId) {
         const projectDOM = document.getElementById(projectId);
         projectDOM.parentNode.removeChild(projectDOM);
+        refreshTaskDOMList();
     };
 
     const convertTaskObjectToDOM = function(taskObject) {
@@ -250,11 +252,13 @@ const DomController = (function() {
 
     const addToTaskDOMList = function(taskDOM) {
         taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
+        refreshTaskDOMList();
     };
 
     const deleteFromTaskDOMList = function(taskId) {
         const taskDOM = document.getElementById(taskId);
         taskDOM.parentNode.removeChild(taskDOM);
+        refreshTaskDOMList();
     };
 
     function refreshTaskDOMList() {
@@ -263,7 +267,10 @@ const DomController = (function() {
         const activeProjectId = (activeProjectTitle !== 'All Tasks') ?  activeProject.id : ''
 
         const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
+        var pendingTasksCount = 0;
+
         const showCompletedTasks = showCompletedTasksButton.classList.contains('active-tasks-filter');
+        var completedTasksCount = 0;
 
         const tasks = document.getElementsByClassName('task');
         // Add the 'show-task' class to the filtered elements, and remove the 'show-task' class from the elements that are not selected
@@ -271,14 +278,22 @@ const DomController = (function() {
             removeClass(tasks[i], 'show-task');
             if (tasks[i].className.indexOf(activeProjectId) > -1) {
                 const isTaskCompleted = tasks[i].querySelector('input').checked;
-                if (showPendingTasks && !isTaskCompleted) {
-                    addClass(tasks[i], 'show-task');
+                if (!isTaskCompleted) {
+                    pendingTasksCount++;
+                    if (showPendingTasks) {
+                        addClass(tasks[i], 'show-task');
+                    };
                 };
-                if (showCompletedTasks && isTaskCompleted) {
-                    addClass(tasks[i], 'show-task');
+                if (isTaskCompleted) {
+                    completedTasksCount++;
+                    if (showCompletedTasks) {
+                        addClass(tasks[i], 'show-task');
+                    };
                 };
             };
         };
+        showPendingTasksButton.innerText = 'Show pending tasks (' + pendingTasksCount + ')';
+        showCompletedTasksButton.innerText = 'Show completed tasks (' + completedTasksCount + ')';
     };
 
     // Show filtered elements
