@@ -54,34 +54,6 @@ const Datastore = (function() {
         });
     };
 
-    function createTask(taskObject) {
-        taskObject.id = _generateUUID();
-        const _taskDatastore = localStorage.taskDatastore;
-        _taskDatastore.push(taskObject);
-        localStorage.taskDatastore = _taskDatastore;
-        return taskObject;
-    };
-
-    function readAllTasks() {
-        return localStorage.taskDatastore;
-    };
-
-    function updateTask(taskObject) {
-        const _taskDatastore = localStorage.taskDatastore;
-        const taskObjectIndex = _taskDatastore.findIndex((
-            _taskObject => _taskObject.id === taskObject.id
-        ));
-        _taskDatastore[taskObjectIndex] = Object.assign(_taskDatastore[taskObjectIndex], taskObject);
-        localStorage.taskDatastore = _taskDatastore;
-        return taskObject;
-    };
-
-    function deleteTask(taskId) {
-        localStorage.taskDatastore = localStorage.taskDatastore.filter((
-            _taskObject => _taskObject.id !== taskId
-        ));
-    };
-
     function createProject(projectObject) {
         projectObject.id = _generateUUID();
         const _projectDatastore = localStorage.projectDatastore;
@@ -110,9 +82,37 @@ const Datastore = (function() {
         ));
     };
 
+    function createTask(taskObject) {
+        taskObject.id = _generateUUID();
+        const _taskDatastore = localStorage.taskDatastore;
+        _taskDatastore.push(taskObject);
+        localStorage.taskDatastore = _taskDatastore;
+        return taskObject;
+    };
+
+    function readAllTasks() {
+        return localStorage.taskDatastore;
+    };
+
+    function updateTask(taskObject) {
+        const _taskDatastore = localStorage.taskDatastore;
+        const taskObjectIndex = _taskDatastore.findIndex((
+            _taskObject => _taskObject.id === taskObject.id
+        ));
+        _taskDatastore[taskObjectIndex] = Object.assign(_taskDatastore[taskObjectIndex], taskObject);
+        localStorage.taskDatastore = _taskDatastore;
+        return taskObject;
+    };
+
+    function deleteTask(taskId) {
+        localStorage.taskDatastore = localStorage.taskDatastore.filter((
+            _taskObject => _taskObject.id !== taskId
+        ));
+    };
+
     return {
-        createTask, readAllTasks, updateTask, deleteTask,
-        createProject, readAllProjects, updateProject, deleteProject
+        createProject, readAllProjects, updateProject, deleteProject,
+        createTask, readAllTasks, updateTask, deleteTask
     };
 })();
 

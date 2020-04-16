@@ -82,11 +82,11 @@ const DomController = (function() {
                 projectDOMList.style.display = 'flex';
                 projectDOMList.style.flexDirection = 'column';
                     showAllTasks.id = 'all-tasks';
-                    showAllTasks.style.cursor = 'pointer';
                     showAllTasks.classList.add('active-project');
+                    showAllTasks.style.cursor = 'pointer';
+                    showAllTasks.style.border = '1px solid black';
                         showAllTasksTitle.innerText = 'All Tasks';
                     showAllTasks.appendChild(showAllTasksTitle);
-                    showAllTasks.style.border = '1px solid black';
                     showAllTasks.addEventListener('click', function(event) {
                         const activeProject = document.querySelector('.active-project');
                         activeProject.classList.remove('active-project');
@@ -98,10 +98,10 @@ const DomController = (function() {
                     addNewProject.style.cursor = 'pointer';
                     addNewProject.style.border = '1px solid black';
                         addNewProjectText.innerText = 'New Project';
+                    addNewProject.appendChild(addNewProjectText);
                         addNewProjectButton.style.color = 'blue';
                         addNewProjectButton.style.fontWeight = 'bold';
                         addNewProjectButton.innerText = '+';
-                    addNewProject.appendChild(addNewProjectText);
                     addNewProject.appendChild(addNewProjectButton);
                     addNewProject.addEventListener('click', function(event) {
                         const projectModal = document.querySelector('#project-modal');
@@ -122,6 +122,7 @@ const DomController = (function() {
                 taskFilters.style.display = 'flex';
                 taskFilters.style.justifyContent = 'space-around';
                     showPendingTasksButton.id = 'show-pending-tasks-button';
+                    showPendingTasksButton.classList.add('active-tasks-filter');
                     showPendingTasksButton.style.border = '1px solid black';
                     showPendingTasksButton.style.borderRadius = '9999px';
                     showPendingTasksButton.style.fontSize = '11.25px';
@@ -129,13 +130,13 @@ const DomController = (function() {
                     showPendingTasksButton.style.padding = '2.5px';
                     showPendingTasksButton.style.cursor = 'pointer';
                     showPendingTasksButton.style.userSelect = 'none';
-                    showPendingTasksButton.classList.add('active-tasks-filter');
                     showPendingTasksButton.addEventListener('click', function(event) {
                         showPendingTasksButton.classList.toggle('active-tasks-filter');
                         refreshTaskDOMList();
                     });
                 taskFilters.appendChild(showPendingTasksButton);
                     showCompletedTasksButton.id = 'show-completed-tasks-button';
+                    showCompletedTasksButton.classList.add('active-tasks-filter');
                     showCompletedTasksButton.style.border = '1px solid black';
                     showCompletedTasksButton.style.borderRadius = '9999px';
                     showCompletedTasksButton.style.fontSize = '11.25px';
@@ -143,7 +144,6 @@ const DomController = (function() {
                     showCompletedTasksButton.style.padding = '2.5px';
                     showCompletedTasksButton.style.cursor = 'pointer';
                     showCompletedTasksButton.style.userSelect = 'none';
-                    showCompletedTasksButton.classList.add('active-tasks-filter');
                     showCompletedTasksButton.addEventListener('click', function(event) {
                         showCompletedTasksButton.classList.toggle('active-tasks-filter');
                         refreshTaskDOMList();
@@ -178,16 +178,21 @@ const DomController = (function() {
         return mainContainer;
     };
 
+    const _getActiveProjectId = function() {
+        const activeProject = document.querySelector('.active-project');
+        return (activeProject.id === 'all-tasks') ? '' : activeProject.id;
+    };
+
     const convertProjectObjectToDOM = function(projectObject) {
         const projectDOM = document.createElement('div');
             const projectDOMTitle = document.createElement('span');
             const editProjectButton = document.createElement('span');
             const deleteProjectButton = document.createElement('span');
 
+        projectDOM.id = projectObject.id;
         projectDOM.classList.add('project');
         projectDOM.style.cursor = 'pointer';
         projectDOM.style.border = '1px solid black';
-        projectDOM.id = projectObject.id;
             projectDOMTitle.innerText = projectObject.title;
         projectDOM.appendChild(projectDOMTitle);
             editProjectButton.innerText = '✎';
@@ -227,12 +232,14 @@ const DomController = (function() {
 
     const addToProjectDOMList = function(projectDOM) {
         const projectDOMList = document.querySelector('#project-dom-list');
+
         projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
         refreshTaskDOMList();
     };
 
     const _deleteFromProjectDOMList = function(projectId) {
         const projectDOM = document.getElementById(projectId);
+
         projectDOM.parentNode.removeChild(projectDOM);
         refreshTaskDOMList();
     };
@@ -259,6 +266,7 @@ const DomController = (function() {
         projectView.appendChild(projectViewTitleLabel);
         projectView.appendChild(_createLineBreak());
             projectViewTitle.type = 'text';
+            projectViewTitle.required = true;
             projectViewTitle.name = 'projectTitle';
             projectViewTitle.value = projectObject.title;
         projectView.appendChild(projectViewTitle);
@@ -279,7 +287,7 @@ const DomController = (function() {
                     Datastore.updateProject(projectObject);                    
                 };
                 refreshTaskDOMList();
-            })
+            });
         projectView.appendChild(updateProjectButton);
         return projectView;
     };
@@ -291,11 +299,11 @@ const DomController = (function() {
             const editTaskButton = document.createElement('span');
             const deleteTaskButton = document.createElement('span');
 
+        taskDOM.id = taskObject.id;
         taskDOM.classList.add(taskObject.projectId);
         taskDOM.classList.add('task');
         taskDOM.style.cursor = 'pointer';
         taskDOM.style.border = '1px solid black';
-        taskDOM.id = taskObject.id;
             taskDOMCompleted.type = 'checkbox';
             taskDOMCompleted.checked = taskObject.completed;
             taskDOMCompleted.addEventListener('click', function(event) {
@@ -347,14 +355,13 @@ const DomController = (function() {
         let isTaskBeingNewlyCreated = false;
         if (typeof taskObject === 'undefined') {
             isTaskBeingNewlyCreated = true;
-            const activeProject = document.querySelector('.active-project');
-            const activeProjectId = (activeProject.id !== 'all-tasks') ? activeProject.id : '';
+            const activeProjectId = _getActiveProjectId();
             taskObject = {
                 'description': '',
                 'dueDate': '',
                 'completed': false,
                 'priority': 'Low',
-                'projectId': (activeProjectId !== '') ? activeProjectId : 'project-id-unassigned',
+                'projectId': (activeProjectId === '') ? 'project-id-unassigned' : activeProjectId,
                 'title': ''
             };
         };
@@ -380,6 +387,7 @@ const DomController = (function() {
             taskViewTitleLabel.innerText = 'Title';
         taskView.appendChild(taskViewTitleLabel);
             taskViewTitle.type = 'text';
+            taskViewTitle.required = true;
             taskViewTitle.name = 'taskTitle';
             taskViewTitle.value = taskObject.title;
         taskView.appendChild(taskViewTitle);
@@ -387,6 +395,7 @@ const DomController = (function() {
             taskViewDescriptionLabel.for = 'taskDescription';
             taskViewDescriptionLabel.innerText = 'Description';
         taskView.appendChild(taskViewDescriptionLabel);
+            taskViewDescription.required = true;
             taskViewDescription.name = 'taskDescription';
             taskViewDescription.defaultValue = taskObject.description;
         taskView.appendChild(taskViewDescription);
@@ -440,8 +449,7 @@ const DomController = (function() {
     };
 
     function refreshTaskDOMList() {
-        const activeProject = document.querySelector('.active-project');
-        const activeProjectId = (activeProject.id !== 'all-tasks') ? activeProject.id : '';
+        const activeProjectId = _getActiveProjectId();
 
         const showPendingTasksButton = document.querySelector('#show-pending-tasks-button');
         const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
@@ -462,8 +470,7 @@ const DomController = (function() {
                     if (showPendingTasks) {
                         tasks[i].classList.add('show-task');
                     };
-                };
-                if (isTaskCompleted) {
+                } else {
                     completedTasksCount++;
                     if (showCompletedTasks) {
                         tasks[i].classList.add('show-task');
