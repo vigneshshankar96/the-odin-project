@@ -1,9 +1,16 @@
 
-import { DomController } from "./views/dom-conrol";
-import { Datastore } from "./databases/local-datastore";
+import { DomController } from './views/dom-conrol';
+import { Datastore } from './databases/local-datastore';
 
 const content = document.getElementById('content');
-content.appendChild(DomController.render());
+    const mainContainer = DomController.createMainContainerElement();
+content.appendChild(mainContainer);
+    const projectViewer = DomController.createProjectViewerElement();
+    const newProjectModal = DomController.createModalElement('project-modal', projectViewer);
+content.appendChild(newProjectModal);
+    const taskViewer = DomController.createTaskViewerElement();
+    const newTaskModal = DomController.createModalElement('task-modal', taskViewer) 
+content.appendChild(newTaskModal);
 
 Datastore.readAllProjects().forEach(projectObject => {
     const projectDOM = DomController.convertProjectObjectToDOM(projectObject);
@@ -30,3 +37,12 @@ const newTaskObject = Datastore.createTask({
 });
 const newTaskDOM = DomController.convertTaskObjectToDOM(newTaskObject);
 DomController.addToTaskDOMList(newTaskDOM);
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target === newProjectModal) {
+        newProjectModal.style.display = 'none';
+    } else if (event.target === newTaskModal) {
+        newTaskModal.style.display = 'none';
+    }
+}
