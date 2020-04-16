@@ -46,7 +46,7 @@ const DomController = (function() {
                     modalCloseButton.style.color = '#aaa';
                 });
             modalContainer.appendChild(modalCloseButton);
-                modalContent.id = id + '-content';
+                modalContent.id = `${id}-content`;
             modalContainer.appendChild(modalContent);
         modal.appendChild(modalContainer);
         return modal;
@@ -279,16 +279,17 @@ const DomController = (function() {
             };
             updateProjectButton.style.width = '45%';
             updateProjectButton.style.margin = 'auto';
-            updateProjectButton.addEventListener('click', function(event) {
-                projectObject.title = projectViewTitle.value;
-                if (isProjectBeingNewlyCreated) {
-                    Datastore.createProject(projectObject);
-                } else {
-                    Datastore.updateProject(projectObject);                    
-                };
-                refreshTaskDOMList();
-            });
         projectView.appendChild(updateProjectButton);
+        projectView.addEventListener('submit', function(event) {
+            projectObject.title = projectViewTitle.value;
+            if (isProjectBeingNewlyCreated) {
+                const newProjectObject = Datastore.createProject(projectObject);
+                const newProjectDOM = DomController.convertProjectObjectToDOM(newProjectObject);
+                addToProjectDOMList(newProjectDOM);
+            } else {
+                Datastore.updateProject(projectObject);                    
+            };
+        });
         return projectView;
     };
 
@@ -432,19 +433,20 @@ const DomController = (function() {
             };
             updateTaskButton.style.width = '45%';
             updateTaskButton.style.margin = 'auto';
-            updateTaskButton.addEventListener('click', function(event) {
-                taskObject.title = taskViewTitle.value;
-                taskObject.description = taskViewDescription.value;
-                taskObject.priority = taskViewPriority.value;
-                taskObject.dueDate = taskViewDueDate.value;
-                if (isTaskBeingNewlyCreated) {
-                    Datastore.createTask(taskObject);
-                } else {
-                    Datastore.updateTask(taskObject);                    
-                };
-                refreshTaskDOMList();
-            });
         taskView.appendChild(updateTaskButton);
+        taskView.addEventListener('submit', function(event) {
+            taskObject.title = taskViewTitle.value;
+            taskObject.description = taskViewDescription.value;
+            taskObject.priority = taskViewPriority.value;
+            taskObject.dueDate = taskViewDueDate.value;
+            if (isTaskBeingNewlyCreated) {
+                const newTaskObject = Datastore.createTask(taskObject);
+                const newTaskDOM = DomController.convertTaskObjectToDOM(newTaskObject);
+                addToTaskDOMList(newTaskDOM);
+            } else {
+                Datastore.updateTask(taskObject);                    
+            };
+        });
         return taskView;
     };
 
@@ -478,8 +480,8 @@ const DomController = (function() {
                 };
             };
         };
-        showPendingTasksButton.innerText = 'Pending tasks (' + pendingTasksCount + ')';
-        showCompletedTasksButton.innerText = 'Completed tasks (' + completedTasksCount + ')';
+        showPendingTasksButton.innerText = `Pending tasks (${pendingTasksCount})`;
+        showCompletedTasksButton.innerText = `Completed tasks (${completedTasksCount})`;
     };
 
     return {
