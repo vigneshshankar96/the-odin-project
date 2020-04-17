@@ -400,6 +400,7 @@ const DOMController = (function() {
         const projectDOMTitle = projectDOM.querySelector('span');
 
         projectDOMTitle.innerText = projectObject.title;
+        return projectDOM;
     };
 
     const _addProjectDOMToDOMList = function(projectDOM) {
@@ -473,6 +474,7 @@ const DOMController = (function() {
         const taskDOMTitle = taskDOM.querySelector('span');
 
         taskDOMTitle.innerText = taskObject.title;
+        return taskDOM;
     };
 
     const _addTaskDOMToDOMList = function(taskDOM) {
