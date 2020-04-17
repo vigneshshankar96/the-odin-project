@@ -1,13 +1,13 @@
 
-import { DomController } from './views/dom-conrol';
+import { DOMController } from './views/dom-conrol';
 
 const content = document.querySelector('content');
-    const mainContainer = DomController.createMainContainerElement();
+    const mainContainer = DOMController.createMainContainerElement();
 content.appendChild(mainContainer);
-    const projectModal = DomController.createModalElement('project-modal');
+    const projectModal = DOMController.createModalElement('project-modal');
 content.appendChild(projectModal);
-    const taskModal = DomController.createModalElement('task-modal') ;
+    const taskModal = DOMController.createModalElement('task-modal') ;
 content.appendChild(taskModal);
 
-DomController.loadProjectDOMList();
-DomController.loadTaskDOMList();
+DOMController.loadProjectDOMList();
+DOMController.loadTaskDOMList();

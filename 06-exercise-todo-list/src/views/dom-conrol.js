@@ -1,60 +1,6 @@
 import { Datastore } from './../databases/local-datastore';
 
-const DomController = (function() {
-
-    const _createLineBreak = function() {
-        return document.createElement('br');
-    };
-
-    const createModalElement = function(id) {
-        const modal = document.createElement('div');
-            const modalContainer = document.createElement('div');
-                const modalCloseButton = document.createElement('span');
-                const modalContent = document.createElement('div');
-
-        modal.id = id;
-        modal.style.display = 'none'; // Hidden by default
-        modal.style.position = 'fixed'; // Stay in place
-        modal.style.zIndex = '1'; // Sit on top
-        modal.style.paddingTop = '100px'; // Location of the box
-        modal.style.left = '0';
-        modal.style.top = '0';
-        modal.style.width = '100%'; // Full width
-        modal.style.height = '100%'; // Full height
-        modal.style.overflow = 'auto'; // Enable scroll if needed
-        modal.style.backgroundColor = 'rgb(0,0,0)'; // Fallback color
-        modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black w/ opacity
-            modalContainer.style.backgroundColor = '#fefefe';
-            modalContainer.style.margin = 'auto';
-            modalContainer.style.padding = '20px';
-            modalContainer.style.border = '1px solid #888';
-            modalContainer.style.width = '80%';
-                modalCloseButton.style.color = '#aaa';
-                modalCloseButton.style.float = 'right';
-                modalCloseButton.style.fontSize = '28px';
-                modalCloseButton.style.fontWeight = 'bold';
-                modalCloseButton.innerText = '×';
-                modalCloseButton.addEventListener('click', function(event) {
-                    modal.style.display = 'none';
-                });
-                modalCloseButton.addEventListener('mouseover', function(event) {
-                    modalCloseButton.style.color = 'black';
-                    modalCloseButton.style.textDecoration = 'none';
-                    modalCloseButton.style.cursor = 'pointer';
-                });
-                modalCloseButton.addEventListener('mouseout', function(event) {
-                    modalCloseButton.style.color = '#aaa';
-                });
-            modalContainer.appendChild(modalCloseButton);
-                modalContent.id = `${id}-content`;
-            modalContainer.appendChild(modalContent);
-        modal.appendChild(modalContainer);
-        // When the user clicks anywhere outside of the modal, close it
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) modal.style.display = 'none';
-        });
-        return modal;
-    };
+const DOMController = (function() {
 
     const createMainContainerElement = function() {
         const mainContainer = document.createElement('div');
@@ -112,7 +58,7 @@ const DomController = (function() {
                         while (projectModalContent.hasChildNodes()) {
                             projectModalContent.removeChild(projectModalContent.firstChild);
                         };
-                        projectModalContent.appendChild(_convertProjectObjectToView());
+                        projectModalContent.appendChild(_createProjectView());
                         _getProjectModal().style.display = 'block';
                     });
                 projectDOMList.appendChild(addNewProject);
@@ -171,7 +117,7 @@ const DomController = (function() {
                         while (taskModalContent.hasChildNodes()) {
                             taskModalContent.removeChild(taskModalContent.firstChild);
                         };
-                        taskModalContent.appendChild(_convertTaskObjectToView());
+                        taskModalContent.appendChild(_createTaskView());
                         _getTaskModal().style.display = 'block';
                     });
                 taskDOMList.appendChild(addNewTask);
@@ -180,83 +126,74 @@ const DomController = (function() {
         return mainContainer;
     };
 
+    const createModalElement = function(id) {
+        const modal = document.createElement('div');
+            const modalContainer = document.createElement('div');
+                const modalCloseButton = document.createElement('span');
+                const modalContent = document.createElement('div');
+
+        modal.id = id;
+        modal.style.display = 'none'; // Hidden by default
+        modal.style.position = 'fixed'; // Stay in place
+        modal.style.zIndex = '1'; // Sit on top
+        modal.style.paddingTop = '100px'; // Location of the box
+        modal.style.left = '0';
+        modal.style.top = '0';
+        modal.style.width = '100%'; // Full width
+        modal.style.height = '100%'; // Full height
+        modal.style.overflow = 'auto'; // Enable scroll if needed
+        modal.style.backgroundColor = 'rgb(0,0,0)'; // Fallback color
+        modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black w/ opacity
+            modalContainer.style.backgroundColor = '#fefefe';
+            modalContainer.style.margin = 'auto';
+            modalContainer.style.padding = '20px';
+            modalContainer.style.border = '1px solid #888';
+            modalContainer.style.width = '80%';
+                modalCloseButton.style.color = '#aaa';
+                modalCloseButton.style.float = 'right';
+                modalCloseButton.style.fontSize = '28px';
+                modalCloseButton.style.fontWeight = 'bold';
+                modalCloseButton.innerText = '×';
+                modalCloseButton.addEventListener('click', function(event) {
+                    modal.style.display = 'none';
+                });
+                modalCloseButton.addEventListener('mouseover', function(event) {
+                    modalCloseButton.style.color = 'black';
+                    modalCloseButton.style.textDecoration = 'none';
+                    modalCloseButton.style.cursor = 'pointer';
+                });
+                modalCloseButton.addEventListener('mouseout', function(event) {
+                    modalCloseButton.style.color = '#aaa';
+                });
+            modalContainer.appendChild(modalCloseButton);
+                modalContent.id = `${id}-content`;
+            modalContainer.appendChild(modalContent);
+        modal.appendChild(modalContainer);
+        // When the user clicks anywhere outside of the modal, close it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) modal.style.display = 'none';
+        });
+        return modal;
+    };
+
+    const _createLineBreak = function() {
+        return document.createElement('br');
+    };
+
     const _getActiveProjectId = function() {
         const activeProject = document.querySelector('.active-project');
         return (activeProject.id === 'all-tasks') ? '' : activeProject.id;
-    };
-
-    const _convertProjectObjectToDOM = function(projectObject) {
-        const projectDOM = document.createElement('div');
-            const projectDOMTitle = document.createElement('span');
-            const editProjectButton = document.createElement('span');
-            const deleteProjectButton = document.createElement('span');
-
-        projectDOM.id = projectObject.id;
-        projectDOM.classList.add('project');
-        projectDOM.style.cursor = 'pointer';
-        projectDOM.style.border = '1px solid black';
-            projectDOMTitle.innerText = projectObject.title;
-        projectDOM.appendChild(projectDOMTitle);
-            editProjectButton.innerText = '✎';
-            editProjectButton.addEventListener('click', function(event) {
-                const projectModalContent = _getProjectModal().querySelector('#project-modal-content');
-                while (projectModalContent.hasChildNodes()) {
-                   projectModalContent.removeChild(projectModalContent.firstChild);
-                };
-                projectModalContent.appendChild(_convertProjectObjectToView(projectObject));
-                _getProjectModal().style.display = 'block';
-            });
-        projectDOM.appendChild(editProjectButton);
-            deleteProjectButton.style.color = 'red';
-            deleteProjectButton.style.fontWeight = 'bold';
-            deleteProjectButton.innerText = '×';
-            deleteProjectButton.addEventListener('click', function(event) {
-                event.stopPropagation();
-                if (projectDOM.classList.contains('active-project')) {
-                    const showAllTasks = document.querySelector('#all-tasks');
-                    showAllTasks.classList.add('active-project');
-                };
-                _deleteFromProjectDOMList(projectDOM.id);
-                Datastore.deleteProject(projectObject.id);
-            });
-        projectDOM.appendChild(deleteProjectButton);
-        projectDOM.addEventListener('click', function(event) {
-            const activeProject = document.querySelector('.active-project');
-            activeProject.classList.remove('active-project');
-            projectDOM.classList.add('active-project');
-            const currentProjectTitle = document.querySelector('#current-project-title');
-            currentProjectTitle.innerText = projectObject.title;
-            _refreshTaskDOMList();
-        });
-        return projectDOM;
-    };
-
-    const _addToProjectDOMList = function(projectDOM) {
-        const projectDOMList = document.querySelector('#project-dom-list');
-
-        projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
-        _refreshTaskDOMList();
-    };
-
-    const _deleteFromProjectDOMList = function(projectId) {
-        const projectDOM = document.getElementById(projectId);
-
-        projectDOM.parentNode.removeChild(projectDOM);
-        _refreshTaskDOMList();
-    };
-
-    const _updateProjectDOM = function(projectObject) {
-        const projectDOM = document.getElementById(projectObject.id);
-        const projectDOMTitle = projectDOM.querySelector('span');
-
-        projectDOMTitle.innerText = projectObject.title;
     };
 
     const _getProjectModal = function() {
         return document.querySelector('#project-modal');
     };
 
-    const _convertProjectObjectToView = function(projectObject) {
+    const _getTaskModal = function() {
+        return document.querySelector('#task-modal');
+    };
+
+    const _createProjectView = function(projectObject) {
         let isProjectBeingNewlyCreated = false;
         if (typeof projectObject === 'undefined') {
             isProjectBeingNewlyCreated = true;
@@ -294,8 +231,8 @@ const DomController = (function() {
             event.preventDefault();
             projectObject.title = projectViewTitle.value;
             if (isProjectBeingNewlyCreated) {
-                _addToProjectDOMList(
-                    _convertProjectObjectToDOM(
+                _addProjectDOMToDOMList(
+                    _createProjectDOM(
                         Datastore.createProject(projectObject)
                 ));
             } else {
@@ -307,76 +244,7 @@ const DomController = (function() {
         return projectView;
     };
 
-    const _convertTaskObjectToDOM = function(taskObject) {
-        const taskDOM = document.createElement('div');
-            const taskDOMCompleted = document.createElement('input');
-            const taskDOMTitle = document.createElement('span');
-            const editTaskButton = document.createElement('span');
-            const deleteTaskButton = document.createElement('span');
-
-        taskDOM.id = taskObject.id;
-        taskDOM.classList.add(taskObject.projectId);
-        taskDOM.classList.add('task');
-        taskDOM.style.cursor = 'pointer';
-        taskDOM.style.border = '1px solid black';
-            taskDOMCompleted.type = 'checkbox';
-            taskDOMCompleted.checked = taskObject.completed;
-            taskDOMCompleted.addEventListener('click', function(event) {
-                taskObject.completed = taskDOMCompleted.checked;
-                Datastore.updateTask(taskObject);
-                _refreshTaskDOMList();
-            });
-        taskDOM.appendChild(taskDOMCompleted);
-            taskDOMTitle.innerText = taskObject.title;
-        taskDOM.appendChild(taskDOMTitle);
-            editTaskButton.innerText = '✎';
-            editTaskButton.addEventListener('click', function(event) {
-                const taskModalContent = _getTaskModal().querySelector('#task-modal-content');
-                while (taskModalContent.hasChildNodes()) {
-                   taskModalContent.removeChild(taskModalContent.firstChild);
-                };
-                taskModalContent.appendChild(_convertTaskObjectToView(taskObject));
-                _getTaskModal().style.display = 'block';
-            });
-        taskDOM.appendChild(editTaskButton);
-            deleteTaskButton.style.color = 'red';
-            deleteTaskButton.style.fontWeight = 'bold';
-            deleteTaskButton.innerText = '×';
-            deleteTaskButton.addEventListener('click', function(event) {
-                event.stopPropagation();
-                _deleteFromTaskDOMList(taskDOM.id);
-                Datastore.deleteTask(taskObject.id);
-            });
-        taskDOM.appendChild(deleteTaskButton);
-        return taskDOM;
-    };
-
-    const _addToTaskDOMList = function(taskDOM) {
-        const taskDOMList = document.querySelector('#task-dom-list');
-
-        taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
-        _refreshTaskDOMList();
-    };
-
-    const _deleteFromTaskDOMList = function(taskId) {
-        const taskDOM = document.getElementById(taskId);
-
-        taskDOM.parentNode.removeChild(taskDOM);
-        _refreshTaskDOMList();
-    };
-
-    const _updateTaskDOM = function(taskObject) {
-        const taskDOM = document.getElementById(taskObject.id);
-        const taskDOMTitle = taskDOM.querySelector('span');
-
-        taskDOMTitle.innerText = taskObject.title;
-    };
-
-    const _getTaskModal = function() {
-        return document.querySelector('#task-modal');
-    };
-
-    const _convertTaskObjectToView = function(taskObject) {
+    const _createTaskView = function(taskObject) {
         let isTaskBeingNewlyCreated = false;
         if (typeof taskObject === 'undefined') {
             isTaskBeingNewlyCreated = true;
@@ -468,8 +336,8 @@ const DomController = (function() {
             taskObject.priority = taskViewPriority.value;
             taskObject.dueDate = taskViewDueDate.value;
             if (isTaskBeingNewlyCreated) {
-                _addToTaskDOMList(
-                    _convertTaskObjectToDOM(
+                _addTaskDOMToDOMList(
+                    _createTaskDOM(
                         Datastore.createTask(taskObject)
                 ));
             } else {
@@ -481,7 +349,156 @@ const DomController = (function() {
         return taskView;
     };
 
-    function _refreshTaskDOMList() {
+    const _createProjectDOM = function(projectObject) {
+        const projectDOM = document.createElement('div');
+            const projectDOMTitle = document.createElement('span');
+            const editProjectButton = document.createElement('span');
+            const deleteProjectButton = document.createElement('span');
+
+        projectDOM.id = projectObject.id;
+        projectDOM.classList.add('project');
+        projectDOM.style.cursor = 'pointer';
+        projectDOM.style.border = '1px solid black';
+            projectDOMTitle.innerText = projectObject.title;
+        projectDOM.appendChild(projectDOMTitle);
+            editProjectButton.innerText = '✎';
+            editProjectButton.addEventListener('click', function(event) {
+                const projectModalContent = _getProjectModal().querySelector('#project-modal-content');
+                while (projectModalContent.hasChildNodes()) {
+                   projectModalContent.removeChild(projectModalContent.firstChild);
+                };
+                projectModalContent.appendChild(_createProjectView(projectObject));
+                _getProjectModal().style.display = 'block';
+            });
+        projectDOM.appendChild(editProjectButton);
+            deleteProjectButton.style.color = 'red';
+            deleteProjectButton.style.fontWeight = 'bold';
+            deleteProjectButton.innerText = '×';
+            deleteProjectButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                if (projectDOM.classList.contains('active-project')) {
+                    const showAllTasks = document.querySelector('#all-tasks');
+                    showAllTasks.classList.add('active-project');
+                };
+                _deleteProjectDOMFromDOMList(projectDOM.id);
+                Datastore.deleteProject(projectObject.id);
+            });
+        projectDOM.appendChild(deleteProjectButton);
+        projectDOM.addEventListener('click', function(event) {
+            const activeProject = document.querySelector('.active-project');
+            activeProject.classList.remove('active-project');
+            projectDOM.classList.add('active-project');
+            const currentProjectTitle = document.querySelector('#current-project-title');
+            currentProjectTitle.innerText = projectObject.title;
+            _refreshTaskDOMList();
+        });
+        return projectDOM;
+    };
+
+    const _updateProjectDOM = function(projectObject) {
+        const projectDOM = document.getElementById(projectObject.id);
+        const projectDOMTitle = projectDOM.querySelector('span');
+
+        projectDOMTitle.innerText = projectObject.title;
+    };
+
+    const _addProjectDOMToDOMList = function(projectDOM) {
+        const projectDOMList = document.querySelector('#project-dom-list');
+
+        projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
+        _refreshTaskDOMList();
+    };
+
+    const _deleteProjectDOMFromDOMList = function(projectId) {
+        const projectDOM = document.getElementById(projectId);
+
+        projectDOM.parentNode.removeChild(projectDOM);
+        _refreshTaskDOMList();
+    };
+
+    const loadProjectDOMList = function() {
+        Datastore.readAllProjects().forEach(projectObject => {
+            _addProjectDOMToDOMList(
+                _createProjectDOM(projectObject)
+            );
+        });
+    };
+
+    const _createTaskDOM = function(taskObject) {
+        const taskDOM = document.createElement('div');
+            const taskDOMCompleted = document.createElement('input');
+            const taskDOMTitle = document.createElement('span');
+            const editTaskButton = document.createElement('span');
+            const deleteTaskButton = document.createElement('span');
+
+        taskDOM.id = taskObject.id;
+        taskDOM.classList.add(taskObject.projectId);
+        taskDOM.classList.add('task');
+        taskDOM.style.cursor = 'pointer';
+        taskDOM.style.border = '1px solid black';
+            taskDOMCompleted.type = 'checkbox';
+            taskDOMCompleted.checked = taskObject.completed;
+            taskDOMCompleted.addEventListener('click', function(event) {
+                taskObject.completed = taskDOMCompleted.checked;
+                Datastore.updateTask(taskObject);
+                _refreshTaskDOMList();
+            });
+        taskDOM.appendChild(taskDOMCompleted);
+            taskDOMTitle.innerText = taskObject.title;
+        taskDOM.appendChild(taskDOMTitle);
+            editTaskButton.innerText = '✎';
+            editTaskButton.addEventListener('click', function(event) {
+                const taskModalContent = _getTaskModal().querySelector('#task-modal-content');
+                while (taskModalContent.hasChildNodes()) {
+                   taskModalContent.removeChild(taskModalContent.firstChild);
+                };
+                taskModalContent.appendChild(_createTaskView(taskObject));
+                _getTaskModal().style.display = 'block';
+            });
+        taskDOM.appendChild(editTaskButton);
+            deleteTaskButton.style.color = 'red';
+            deleteTaskButton.style.fontWeight = 'bold';
+            deleteTaskButton.innerText = '×';
+            deleteTaskButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                _deleteTaskDOMFromDOMList(taskDOM.id);
+                Datastore.deleteTask(taskObject.id);
+            });
+        taskDOM.appendChild(deleteTaskButton);
+        return taskDOM;
+    };
+
+    const _updateTaskDOM = function(taskObject) {
+        const taskDOM = document.getElementById(taskObject.id);
+        const taskDOMTitle = taskDOM.querySelector('span');
+
+        taskDOMTitle.innerText = taskObject.title;
+    };
+
+    const _addTaskDOMToDOMList = function(taskDOM) {
+        const taskDOMList = document.querySelector('#task-dom-list');
+
+        taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
+        _refreshTaskDOMList();
+    };
+
+    const _deleteTaskDOMFromDOMList = function(taskId) {
+        const taskDOM = document.getElementById(taskId);
+
+        taskDOM.parentNode.removeChild(taskDOM);
+        _refreshTaskDOMList();
+    };
+
+    const loadTaskDOMList = function() {
+        Datastore.readAllTasks().forEach(taskObject => {
+            _addTaskDOMToDOMList(
+                _createTaskDOM(taskObject)
+            );
+        });
+        _refreshTaskDOMList();
+    };
+
+    const _refreshTaskDOMList = function() {
         const showPendingTasksButton = document.querySelector('#show-pending-tasks-button');
         const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
         let pendingTasksCount = 0;
@@ -509,26 +526,9 @@ const DomController = (function() {
         showCompletedTasksButton.innerText = `Completed tasks (${completedTasksCount})`;
     };
 
-    const loadProjectDOMList = function() {
-        Datastore.readAllProjects().forEach(projectObject => {
-            _addToProjectDOMList(
-                _convertProjectObjectToDOM(projectObject)
-            );
-        });
-    };
-
-    const loadTaskDOMList = function() {
-        Datastore.readAllTasks().forEach(taskObject => {
-            _addToTaskDOMList(
-                _convertTaskObjectToDOM(taskObject)
-            );
-        });
-        _refreshTaskDOMList();
-    };
-
     return {
         createMainContainerElement, createModalElement, loadProjectDOMList, loadTaskDOMList
     };
 })();
 
-export { DomController };
+export { DOMController };
