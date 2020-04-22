@@ -43,12 +43,12 @@ class LocalStorage {
 };
 
 
-const Datastore = (function() {
+const Datastore = (function () {
     const localStorage = new LocalStorage();
     // localStorage.clearTodoListDatastore();
 
-    const _generateUUID = function() {
-        return 'xxyxxxy'.replace(/[xy]/g, function(c) {
+    const _generateUUID = function () {
+        return 'xxyxxxy'.replace(/[xy]/g, function (c) {
             let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
@@ -112,7 +112,7 @@ const Datastore = (function() {
 
     return {
         createProject, readAllProjects, updateProject, deleteProject,
-        createTask, readAllTasks, updateTask, deleteTask
+        createTask, readAllTasks, updateTask, deleteTask,
     };
 })();
 

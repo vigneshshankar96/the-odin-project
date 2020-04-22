@@ -8,13 +8,13 @@ const firebaseConfig = {
     storageBucket: "the-odin-project-4fe63.appspot.com",
     messagingSenderId: "504811638679",
     appId: "1:504811638679:web:6fb41e23816e5d79053ed2",
-    measurementId: "G-ZB924EX38H"
+    measurementId: "G-ZB924EX38H",
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const Datastore = (function() {
+const Datastore = (function () {
     const firebaseDatabase = firebase.database();
     const taskDatastore = firebaseDatabase.ref('/todoListDatastore/taskDatastore');
     const projectDatastore = firebaseDatabase.ref('/todoListDatastore/projectDatastore');
@@ -61,7 +61,7 @@ const Datastore = (function() {
 
     return {
         createTask, readAllTasks, updateTask, deleteTask,
-        createProject, readAllProjects, updateProject, deleteProject
+        createProject, readAllProjects, updateProject, deleteProject,
     };
 })();
 

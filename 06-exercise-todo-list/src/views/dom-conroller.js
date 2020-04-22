@@ -1,8 +1,8 @@
 import { Datastore } from './../databases/local-datastore';
 
-const DOMController = (function() {
+const DOMController = (function () {
 
-    const createMainContainerElement = function() {
+    const createMainContainerElement = function () {
         const mainContainer = document.createElement('div');
             const leftPane = document.createElement('div');
                 const projectDOMList = document.createElement('div');
@@ -37,7 +37,7 @@ const DOMController = (function() {
                     showAllTasks.style.border = '1px solid black';
                         showAllTasksTitle.innerText = 'All Tasks';
                     showAllTasks.appendChild(showAllTasksTitle);
-                    showAllTasks.addEventListener('click', function(event) {
+                    showAllTasks.addEventListener('click', function (event) {
                         const activeProject = document.querySelector('.active-project');
                         activeProject.classList.remove('active-project');
                         showAllTasks.classList.add('active-project');
@@ -53,7 +53,7 @@ const DOMController = (function() {
                         addNewProjectButton.style.fontWeight = 'bold';
                         addNewProjectButton.innerText = '+';
                     addNewProject.appendChild(addNewProjectButton);
-                    addNewProject.addEventListener('click', function(event) {
+                    addNewProject.addEventListener('click', function (event) {
                         const projectModalContent = _getProjectModal().querySelector('#project-modal-content');
                         while (projectModalContent.hasChildNodes()) {
                             projectModalContent.removeChild(projectModalContent.firstChild);
@@ -79,7 +79,7 @@ const DOMController = (function() {
                     showPendingTasksButton.style.padding = '2.5px';
                     showPendingTasksButton.style.cursor = 'pointer';
                     showPendingTasksButton.style.userSelect = 'none';
-                    showPendingTasksButton.addEventListener('click', function(event) {
+                    showPendingTasksButton.addEventListener('click', function (event) {
                         showPendingTasksButton.classList.toggle('active-tasks-filter');
                         _refreshTaskDOMList();
                     });
@@ -93,7 +93,7 @@ const DOMController = (function() {
                     showCompletedTasksButton.style.padding = '2.5px';
                     showCompletedTasksButton.style.cursor = 'pointer';
                     showCompletedTasksButton.style.userSelect = 'none';
-                    showCompletedTasksButton.addEventListener('click', function(event) {
+                    showCompletedTasksButton.addEventListener('click', function (event) {
                         showCompletedTasksButton.classList.toggle('active-tasks-filter');
                         _refreshTaskDOMList();
                     });
@@ -112,7 +112,7 @@ const DOMController = (function() {
                         addNewTaskButton.style.fontWeight = 'bold';
                         addNewTaskButton.innerText = '+';
                     addNewTask.appendChild(addNewTaskButton);
-                    addNewTask.addEventListener('click', function(event) {
+                    addNewTask.addEventListener('click', function (event) {
                         const taskModalContent = _getTaskModal().querySelector('#task-modal-content');
                         while (taskModalContent.hasChildNodes()) {
                             taskModalContent.removeChild(taskModalContent.firstChild);
@@ -126,7 +126,7 @@ const DOMController = (function() {
         return mainContainer;
     };
 
-    const createModalElement = function(id) {
+    const createModalElement = function (id) {
         const modal = document.createElement('div');
             const modalContainer = document.createElement('div');
                 const modalCloseButton = document.createElement('span');
@@ -154,15 +154,15 @@ const DOMController = (function() {
                 modalCloseButton.style.fontSize = '28px';
                 modalCloseButton.style.fontWeight = 'bold';
                 modalCloseButton.innerText = '×';
-                modalCloseButton.addEventListener('click', function(event) {
+                modalCloseButton.addEventListener('click', function (event) {
                     modal.style.display = 'none';
                 });
-                modalCloseButton.addEventListener('mouseover', function(event) {
+                modalCloseButton.addEventListener('mouseover', function (event) {
                     modalCloseButton.style.color = 'black';
                     modalCloseButton.style.textDecoration = 'none';
                     modalCloseButton.style.cursor = 'pointer';
                 });
-                modalCloseButton.addEventListener('mouseout', function(event) {
+                modalCloseButton.addEventListener('mouseout', function (event) {
                     modalCloseButton.style.color = '#aaa';
                 });
             modalContainer.appendChild(modalCloseButton);
@@ -170,35 +170,35 @@ const DOMController = (function() {
             modalContainer.appendChild(modalContent);
         modal.appendChild(modalContainer);
         // When the user clicks anywhere outside of the modal, close it
-        window.addEventListener('click', function(event) {
+        window.addEventListener('click', function (event) {
             if (event.target === modal) modal.style.display = 'none';
         });
         return modal;
     };
 
-    const _createLineBreak = function() {
+    const _createLineBreak = function () {
         return document.createElement('br');
     };
 
-    const _getActiveProjectId = function() {
+    const _getActiveProjectId = function () {
         const activeProject = document.querySelector('.active-project');
-        return (activeProject.id === 'all-tasks') ? '' : activeProject.id;
+        return activeProject.id === 'all-tasks' ? '' : activeProject.id;
     };
 
-    const _getProjectModal = function() {
+    const _getProjectModal = function () {
         return document.querySelector('#project-modal');
     };
 
-    const _getTaskModal = function() {
+    const _getTaskModal = function () {
         return document.querySelector('#task-modal');
     };
 
-    const _createProjectView = function(projectObject) {
+    const _createProjectView = function (projectObject) {
         let isProjectBeingNewlyCreated = false;
         if (typeof projectObject === 'undefined') {
             isProjectBeingNewlyCreated = true;
             projectObject = {
-                'title': ''
+                'title': '',
             };
         };
 
@@ -227,14 +227,15 @@ const DOMController = (function() {
             updateProjectButton.style.width = '45%';
             updateProjectButton.style.margin = 'auto';
         projectView.appendChild(updateProjectButton);
-        projectView.addEventListener('submit', function(event) {
+        projectView.addEventListener('submit', function (event) {
             event.preventDefault();
             projectObject.title = projectViewTitle.value;
             if (isProjectBeingNewlyCreated) {
                 _addProjectDOMToDOMList(
                     _createProjectDOM(
                         Datastore.createProject(projectObject)
-                ));
+                    )
+                );
             } else {
                 Datastore.updateProject(projectObject);
                 _updateProjectDOM(projectObject);
@@ -244,7 +245,7 @@ const DOMController = (function() {
         return projectView;
     };
 
-    const _createTaskView = function(taskObject) {
+    const _createTaskView = function (taskObject) {
         let isTaskBeingNewlyCreated = false;
         if (typeof taskObject === 'undefined') {
             isTaskBeingNewlyCreated = true;
@@ -255,8 +256,8 @@ const DOMController = (function() {
                 'dueDate': dateString,
                 'completed': false,
                 'priority': 'Low',
-                'projectId': (_getActiveProjectId() === '') ? 'project-id-unassigned' : _getActiveProjectId(),
-                'title': ''
+                'projectId': _getActiveProjectId() === '' ? 'project-id-unassigned' : _getActiveProjectId(),
+                'title': '',
             };
         };
 
@@ -329,7 +330,7 @@ const DOMController = (function() {
             updateTaskButton.style.width = '45%';
             updateTaskButton.style.margin = 'auto';
         taskView.appendChild(updateTaskButton);
-        taskView.addEventListener('submit', function(event) {
+        taskView.addEventListener('submit', function (event) {
             event.preventDefault();
             taskObject.title = taskViewTitle.value;
             taskObject.description = taskViewDescription.value;
@@ -339,7 +340,8 @@ const DOMController = (function() {
                 _addTaskDOMToDOMList(
                     _createTaskDOM(
                         Datastore.createTask(taskObject)
-                ));
+                    )
+                );
             } else {
                 Datastore.updateTask(taskObject);
                 _updateTaskDOM(taskObject);
@@ -349,7 +351,7 @@ const DOMController = (function() {
         return taskView;
     };
 
-    const _createProjectDOM = function(projectObject) {
+    const _createProjectDOM = function (projectObject) {
         const projectDOM = document.createElement('div');
             const projectDOMTitle = document.createElement('span');
             const editProjectButton = document.createElement('span');
@@ -362,7 +364,7 @@ const DOMController = (function() {
             projectDOMTitle.innerText = projectObject.title;
         projectDOM.appendChild(projectDOMTitle);
             editProjectButton.innerText = '✎';
-            editProjectButton.addEventListener('click', function(event) {
+            editProjectButton.addEventListener('click', function (event) {
                 const projectModalContent = _getProjectModal().querySelector('#project-modal-content');
                 while (projectModalContent.hasChildNodes()) {
                    projectModalContent.removeChild(projectModalContent.firstChild);
@@ -374,7 +376,7 @@ const DOMController = (function() {
             deleteProjectButton.style.color = 'red';
             deleteProjectButton.style.fontWeight = 'bold';
             deleteProjectButton.innerText = '×';
-            deleteProjectButton.addEventListener('click', function(event) {
+            deleteProjectButton.addEventListener('click', function (event) {
                 event.stopPropagation();
                 if (projectDOM.classList.contains('active-project')) {
                     const showAllTasks = document.querySelector('#all-tasks');
@@ -384,7 +386,7 @@ const DOMController = (function() {
                 Datastore.deleteProject(projectObject.id);
             });
         projectDOM.appendChild(deleteProjectButton);
-        projectDOM.addEventListener('click', function(event) {
+        projectDOM.addEventListener('click', function (event) {
             const activeProject = document.querySelector('.active-project');
             activeProject.classList.remove('active-project');
             projectDOM.classList.add('active-project');
@@ -395,7 +397,7 @@ const DOMController = (function() {
         return projectDOM;
     };
 
-    const _updateProjectDOM = function(projectObject) {
+    const _updateProjectDOM = function (projectObject) {
         const projectDOM = document.getElementById(projectObject.id);
         const projectDOMTitle = projectDOM.querySelector('span');
 
@@ -403,21 +405,21 @@ const DOMController = (function() {
         return projectDOM;
     };
 
-    const _addProjectDOMToDOMList = function(projectDOM) {
+    const _addProjectDOMToDOMList = function (projectDOM) {
         const projectDOMList = document.querySelector('#project-dom-list');
 
         projectDOMList.insertBefore(projectDOM, projectDOMList.lastChild);
         _refreshTaskDOMList();
     };
 
-    const _deleteProjectDOMFromDOMList = function(projectId) {
+    const _deleteProjectDOMFromDOMList = function (projectId) {
         const projectDOM = document.getElementById(projectId);
 
         projectDOM.parentNode.removeChild(projectDOM);
         _refreshTaskDOMList();
     };
 
-    const loadProjectDOMList = function() {
+    const loadProjectDOMList = function () {
         Datastore.readAllProjects().forEach(projectObject => {
             _addProjectDOMToDOMList(
                 _createProjectDOM(projectObject)
@@ -425,7 +427,7 @@ const DOMController = (function() {
         });
     };
 
-    const _createTaskDOM = function(taskObject) {
+    const _createTaskDOM = function (taskObject) {
         const taskDOM = document.createElement('div');
             const taskDOMCompleted = document.createElement('input');
             const taskDOMTitle = document.createElement('span');
@@ -439,7 +441,7 @@ const DOMController = (function() {
         taskDOM.style.border = '1px solid black';
             taskDOMCompleted.type = 'checkbox';
             taskDOMCompleted.checked = taskObject.completed;
-            taskDOMCompleted.addEventListener('click', function(event) {
+            taskDOMCompleted.addEventListener('click', function (event) {
                 taskObject.completed = taskDOMCompleted.checked;
                 Datastore.updateTask(taskObject);
                 _refreshTaskDOMList();
@@ -448,7 +450,7 @@ const DOMController = (function() {
             taskDOMTitle.innerText = taskObject.title;
         taskDOM.appendChild(taskDOMTitle);
             editTaskButton.innerText = '✎';
-            editTaskButton.addEventListener('click', function(event) {
+            editTaskButton.addEventListener('click', function (event) {
                 const taskModalContent = _getTaskModal().querySelector('#task-modal-content');
                 while (taskModalContent.hasChildNodes()) {
                    taskModalContent.removeChild(taskModalContent.firstChild);
@@ -460,7 +462,7 @@ const DOMController = (function() {
             deleteTaskButton.style.color = 'red';
             deleteTaskButton.style.fontWeight = 'bold';
             deleteTaskButton.innerText = '×';
-            deleteTaskButton.addEventListener('click', function(event) {
+            deleteTaskButton.addEventListener('click', function (event) {
                 event.stopPropagation();
                 _deleteTaskDOMFromDOMList(taskDOM.id);
                 Datastore.deleteTask(taskObject.id);
@@ -469,7 +471,7 @@ const DOMController = (function() {
         return taskDOM;
     };
 
-    const _updateTaskDOM = function(taskObject) {
+    const _updateTaskDOM = function (taskObject) {
         const taskDOM = document.getElementById(taskObject.id);
         const taskDOMTitle = taskDOM.querySelector('span');
 
@@ -477,21 +479,21 @@ const DOMController = (function() {
         return taskDOM;
     };
 
-    const _addTaskDOMToDOMList = function(taskDOM) {
+    const _addTaskDOMToDOMList = function (taskDOM) {
         const taskDOMList = document.querySelector('#task-dom-list');
 
         taskDOMList.insertBefore(taskDOM, taskDOMList.lastChild);
         _refreshTaskDOMList();
     };
 
-    const _deleteTaskDOMFromDOMList = function(taskId) {
+    const _deleteTaskDOMFromDOMList = function (taskId) {
         const taskDOM = document.getElementById(taskId);
 
         taskDOM.parentNode.removeChild(taskDOM);
         _refreshTaskDOMList();
     };
 
-    const loadTaskDOMList = function() {
+    const loadTaskDOMList = function () {
         Datastore.readAllTasks().forEach(taskObject => {
             _addTaskDOMToDOMList(
                 _createTaskDOM(taskObject)
@@ -500,7 +502,7 @@ const DOMController = (function() {
         _refreshTaskDOMList();
     };
 
-    const _refreshTaskDOMList = function() {
+    const _refreshTaskDOMList = function () {
         const showPendingTasksButton = document.querySelector('#show-pending-tasks-button');
         const showPendingTasks = showPendingTasksButton.classList.contains('active-tasks-filter');
         let pendingTasksCount = 0;
@@ -529,7 +531,7 @@ const DOMController = (function() {
     };
 
     return {
-        createMainContainerElement, createModalElement, loadProjectDOMList, loadTaskDOMList
+        createMainContainerElement, createModalElement, loadProjectDOMList, loadTaskDOMList,
     };
 })();
 
