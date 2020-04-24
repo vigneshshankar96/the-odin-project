@@ -1,11 +1,10 @@
-import store from 'store-js';
+import store from "store-js";
 
 class LocalStorage {
-
   constructor() {
     this.emptyTodoListDatastore = {
       taskDatastore: [],
-      projectDatastore: []
+      projectDatastore: [],
     };
   }
 
@@ -14,11 +13,11 @@ class LocalStorage {
   }
 
   get todoListDatastore() {
-    return store.get('todoListDatastore') || this.emptyTodoListDatastore;
+    return store.get("todoListDatastore") || this.emptyTodoListDatastore;
   }
 
   set todoListDatastore(value) {
-    store.set('todoListDatastore', value);
+    store.set("todoListDatastore", value);
   }
 
   get taskDatastore() {
@@ -47,8 +46,9 @@ const Datastore = (function () {
   // localStorage.clearTodoListDatastore();
 
   const _generateUUID = function () {
-    return 'xxyxxxy'.replace(/[xy]/g, function (c) {
-      let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return "xxyxxxy".replace(/[xy]/g, function (c) {
+      let r = (Math.random() * 16) | 0,
+        v = c == "x" ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   };
@@ -67,18 +67,21 @@ const Datastore = (function () {
 
   function updateProject(projectObject) {
     const _projectDatastore = localStorage.projectDatastore;
-    const projectObjectIndex = _projectDatastore.findIndex((
-      _projectObject => _projectObject.id === projectObject.id
-    ));
-    _projectDatastore[projectObjectIndex] = Object.assign(_projectDatastore[projectObjectIndex], projectObject);
+    const projectObjectIndex = _projectDatastore.findIndex(
+      (_projectObject) => _projectObject.id === projectObject.id
+    );
+    _projectDatastore[projectObjectIndex] = Object.assign(
+      _projectDatastore[projectObjectIndex],
+      projectObject
+    );
     localStorage.projectDatastore = _projectDatastore;
     return projectObject;
   }
 
   function deleteProject(projectId) {
-    localStorage.projectDatastore = localStorage.projectDatastore.filter((
-      _projectObject => _projectObject.id !== projectId
-    ));
+    localStorage.projectDatastore = localStorage.projectDatastore.filter(
+      (_projectObject) => _projectObject.id !== projectId
+    );
   }
 
   function createTask(taskObject) {
@@ -95,23 +98,32 @@ const Datastore = (function () {
 
   function updateTask(taskObject) {
     const _taskDatastore = localStorage.taskDatastore;
-    const taskObjectIndex = _taskDatastore.findIndex((
-      _taskObject => _taskObject.id === taskObject.id
-    ));
-    _taskDatastore[taskObjectIndex] = Object.assign(_taskDatastore[taskObjectIndex], taskObject);
+    const taskObjectIndex = _taskDatastore.findIndex(
+      (_taskObject) => _taskObject.id === taskObject.id
+    );
+    _taskDatastore[taskObjectIndex] = Object.assign(
+      _taskDatastore[taskObjectIndex],
+      taskObject
+    );
     localStorage.taskDatastore = _taskDatastore;
     return taskObject;
   }
 
   function deleteTask(taskId) {
-    localStorage.taskDatastore = localStorage.taskDatastore.filter((
-      _taskObject => _taskObject.id !== taskId
-    ));
+    localStorage.taskDatastore = localStorage.taskDatastore.filter(
+      (_taskObject) => _taskObject.id !== taskId
+    );
   }
 
   return {
-    createProject, readAllProjects, updateProject, deleteProject,
-    createTask, readAllTasks, updateTask, deleteTask,
+    createProject,
+    readAllProjects,
+    updateProject,
+    deleteProject,
+    createTask,
+    readAllTasks,
+    updateTask,
+    deleteTask,
   };
 })();
 

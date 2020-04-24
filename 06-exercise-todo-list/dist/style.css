@@ -1,6 +1,5 @@
 body {
-  font-family: Arial, Helvetica,
-  sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .task {
@@ -8,7 +7,6 @@ body {
 }
 
 .project {
-
 }
 
 .show-task {
@@ -20,5 +18,5 @@ body {
 }
 
 .active-tasks-filter {
-  background-color: aquamarine;    
+  background-color: aquamarine;
 }

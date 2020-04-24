@@ -1,4 +1,3 @@
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDI4ihJIx5Eq17UFEq5HqnE6Oux6XtI52k",
@@ -16,8 +15,12 @@ firebase.initializeApp(firebaseConfig);
 
 const Datastore = (function () {
   const firebaseDatabase = firebase.database();
-  const taskDatastore = firebaseDatabase.ref('/todoListDatastore/taskDatastore');
-  const projectDatastore = firebaseDatabase.ref('/todoListDatastore/projectDatastore');
+  const taskDatastore = firebaseDatabase.ref(
+    "/todoListDatastore/taskDatastore"
+  );
+  const projectDatastore = firebaseDatabase.ref(
+    "/todoListDatastore/projectDatastore"
+  );
 
   function createTask(object) {
     const newTask = taskDatastore.push();
@@ -27,7 +30,7 @@ const Datastore = (function () {
   }
 
   function readAllTasks() {
-    return taskDatastore.once('value');
+    return taskDatastore.once("value");
   }
 
   function updateTask(object) {
@@ -47,7 +50,7 @@ const Datastore = (function () {
   }
 
   function readAllProjects() {
-    return projectDatastore.once('value');
+    return projectDatastore.once("value");
   }
 
   function updateProject(object) {
@@ -60,8 +63,14 @@ const Datastore = (function () {
   }
 
   return {
-    createTask, readAllTasks, updateTask, deleteTask,
-    createProject, readAllProjects, updateProject, deleteProject,
+    createTask,
+    readAllTasks,
+    updateTask,
+    deleteTask,
+    createProject,
+    readAllProjects,
+    updateProject,
+    deleteProject,
   };
 })();
 
