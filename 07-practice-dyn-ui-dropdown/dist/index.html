@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>> hello, friend.</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="top-nav-bar" id="my-top-nav-bar">
+      <a href="#home" class="active">Home</a>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+      <div class="dropdown-container">
+        <button class="dropdown-button">
+          Dropdown &#9660;
+        </button>
+        <div class="dropdown-content">
+          <a href="#">Link 1</a>
+          <a href="#">Link 2</a>
+          <a href="#">Link 3</a>
+        </div>
+      </div>
+      <a href="#about">About</a>
+      <a
+        href="javascript:void(0);"
+        class="hamburger-menu-icon"
+        onclick="toggleResponsiveTopNavBar()"
+      >
+        &#9776;
+      </a>
+    </div>
+
+    <div id="content">
+      <h2>Responsive Topnav with Dropdown</h2>
+      <p>Resize the browser window to see how it works.</p>
+      <p>Hover over the dropdown button to open the dropdown menu.</p>
+    </div>
+
+    <script>
+      const toggleResponsiveTopNavBar = function () {
+        const x = document.getElementById("my-top-nav-bar");
+        if (x.className === "top-nav-bar") {
+          x.className += " responsive";
+        } else {
+          x.className = "top-nav-bar";
+        }
+      };
+    </script>
+    <script src="main.js"></script>
+  </body>
+</html>
