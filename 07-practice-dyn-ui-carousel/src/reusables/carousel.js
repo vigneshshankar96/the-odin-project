@@ -1,0 +1,69 @@
+const CAROUSEL_TAG = "pt-carousel";
+const SLIDE_TAG = "pt-slide";
+
+const CarouselFactory = (carouselElement) => {
+  const slides = carouselElement.querySelectorAll(SLIDE_TAG);
+
+  const indexControl = document.createElement("div");
+  const indexControlPrevButton = document.createElement("button");
+  const indexIndicatorText = document.createElement("span");
+  const indexControlNextButton = document.createElement("button");
+  const dotsContainer = document.createElement("div");
+
+  indexControl.classList.add("index-control");
+  indexControlPrevButton.textContent = "<";
+  indexControl.appendChild(indexControlPrevButton);
+  indexIndicatorText.classList.add("index-indicator-text");
+  indexControl.appendChild(indexIndicatorText);
+  indexControlNextButton.textContent = ">";
+  indexControl.appendChild(indexControlNextButton);
+  carouselElement.insertBefore(indexControl, carouselElement.firstChild);
+  dotsContainer.classList.add("dots-container");
+  slides.forEach((_, index) => {
+    const dot = document.createElement("div");
+    dot.classList.add("dot");
+    dot.addEventListener("click", (event) => setCurrentSlide(index));
+    dotsContainer.appendChild(dot);
+  });
+  carouselElement.appendChild(dotsContainer);
+
+  const dots = dotsContainer.querySelectorAll("div.dot");
+  let currentIndex;
+
+  indexControlNextButton.onclick = (event) => progressSlide(+1);
+  indexControlPrevButton.onclick = (event) => progressSlide(-1);
+
+  function setCurrentSlide(newIndex) {
+    if (currentIndex === newIndex) return;
+    currentIndex = newIndex % slides.length;
+    slides.forEach((slide, index) => {
+      slide.classList.remove("show-slide");
+    });
+    slides[currentIndex].classList.add("show-slide");
+    dots.forEach((dot, index) => {
+      dot.classList.remove("active-dot");
+    });
+    dots[currentIndex].classList.add("active-dot");
+    indexIndicatorText.textContent = `
+    ${currentIndex + 1} / ${slides.length}
+  `;
+  }
+
+  function progressSlide(step) {
+    step %= slides.length;
+    if (step < 0) step += slides.length;
+    setCurrentSlide(currentIndex + step);
+  }
+
+  setCurrentSlide(0);
+};
+
+const CarouselModule = (() => {
+  const carouselElements = document.querySelectorAll(CAROUSEL_TAG);
+
+  carouselElements.forEach((carouselElement) => {
+    CarouselFactory(carouselElement);
+  });
+})();
+
+export { CarouselModule, CarouselFactory };

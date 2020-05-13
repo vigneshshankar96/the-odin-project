@@ -7,14 +7,14 @@ body {
   text-align: center;
 }
 
-.slide {
+pt-slide {
   display: none;
   margin: 7.5px;
   max-width: 1000px;
   animation-name: fade;
   animation-duration: 1.5s;
 }
-.slide * {
+pt-slide * {
   width: 100%;
 }
 .show-slide {

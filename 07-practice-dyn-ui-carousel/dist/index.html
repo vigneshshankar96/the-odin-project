@@ -7,28 +7,20 @@
   </head>
   <body>
     <div id="content">
-      <div class="carousel">
-        <div class="index-control">
-          <button id="prev"><</button>
-          <span class="index-indicator-text"></span>
-          <button id="next">></button>
-        </div>
-        <div class="slides-container">
-          <div class="slide">
-            <img src="./assets/images/carousel-images/img_lights_wide.jpg" />
-          </div>
-          <div class="slide">
-            <img src="./assets/images/carousel-images/img_mountains_wide.jpg" />
-          </div>
-          <div class="slide">
-            <img src="./assets/images/carousel-images/img_nature_wide.jpg" />
-          </div>
-          <div class="slide">
-            <img src="./assets/images/carousel-images/img_snow_wide.jpg" />
-          </div>
-        </div>
-        <div class="dots-container"></div>
-      </div>
+      <pt-carousel>
+        <pt-slide>
+          <img src="./assets/images/carousel-images/img_lights_wide.jpg" />
+        </pt-slide>
+        <pt-slide>
+          <img src="./assets/images/carousel-images/img_mountains_wide.jpg" />
+        </pt-slide>
+        <pt-slide>
+          <img src="./assets/images/carousel-images/img_nature_wide.jpg" />
+        </pt-slide>
+        <pt-slide>
+          <img src="./assets/images/carousel-images/img_snow_wide.jpg" />
+        </pt-slide>
+      </pt-carousel>
     </div>
     <script src="main.js"></script>
   </body>
