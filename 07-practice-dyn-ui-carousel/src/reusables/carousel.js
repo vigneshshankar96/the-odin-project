@@ -3,12 +3,10 @@ const SLIDE_TAG = "pt-slide";
 
 const CarouselFactory = (carouselElement) => {
   let slideChangeInterval = !carouselElement.getAttribute("msTimeInterval")
-    ? "1000" // default time interval for automatic slides switches
+    ? "4000" // default time interval for automatic slides switches
     : carouselElement.getAttribute("msTimeInterval");
-
-  let myTimer = setInterval(function () {
-    progressSlide(1);
-  }, slideChangeInterval);
+  let myTimer;
+  startAutoCarousel();
 
   const slides = carouselElement.querySelectorAll(SLIDE_TAG);
 
@@ -28,17 +26,15 @@ const CarouselFactory = (carouselElement) => {
   carouselElement.insertBefore(indexControl, carouselElement.firstChild);
   dotsContainer.classList.add("dots-container");
   slides.forEach((slide, index) => {
-    slide.addEventListener("mouseenter", (event) => clearInterval(myTimer));
-    slide.addEventListener("mouseleave", (event) => {
+    slide.onmouseenter = (event) => clearInterval(myTimer);
+    slide.onmouseleave = (event) => {
       clearInterval(myTimer);
-      myTimer = setInterval(function () {
-        progressSlide(1);
-      }, slideChangeInterval);
-    });
+      startAutoCarousel();
+    };
 
     const dot = document.createElement("div");
     dot.classList.add("dot");
-    dot.addEventListener("click", (event) => setCurrentSlide(index));
+    dot.onclick = (event) => setCurrentSlide(index);
     dotsContainer.appendChild(dot);
   });
   carouselElement.appendChild(dotsContainer);
@@ -51,9 +47,7 @@ const CarouselFactory = (carouselElement) => {
 
   function setCurrentSlide(newIndex) {
     clearInterval(myTimer);
-    myTimer = setInterval(function () {
-      progressSlide(1);
-    }, slideChangeInterval);
+    startAutoCarousel();
     if (currentIndex === newIndex) return;
     currentIndex = newIndex % slides.length;
     slides.forEach((slide, index) => {
@@ -73,6 +67,10 @@ const CarouselFactory = (carouselElement) => {
     step %= slides.length;
     if (step < 0) step += slides.length;
     setCurrentSlide(currentIndex + step);
+  }
+
+  function startAutoCarousel() {
+    myTimer = setInterval(() => progressSlide(1), slideChangeInterval);
   }
 
   setCurrentSlide(0);
