@@ -9,7 +9,7 @@ body {
 
 pt-slide {
   display: none;
-  margin: 7.5px;
+  margin: 7.5px auto;
   max-width: 1000px;
   animation-name: fade;
   animation-duration: 1.5s;
