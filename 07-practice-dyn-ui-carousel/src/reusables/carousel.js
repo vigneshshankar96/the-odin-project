@@ -2,6 +2,14 @@ const CAROUSEL_TAG = "pt-carousel";
 const SLIDE_TAG = "pt-slide";
 
 const CarouselFactory = (carouselElement) => {
+  let slideChangeInterval = !carouselElement.getAttribute("msTimeInterval")
+    ? "1000" // default time interval for automatic slides switches
+    : carouselElement.getAttribute("msTimeInterval");
+
+  let myTimer = setInterval(function () {
+    progressSlide(1);
+  }, slideChangeInterval);
+
   const slides = carouselElement.querySelectorAll(SLIDE_TAG);
 
   const indexControl = document.createElement("div");
@@ -19,7 +27,15 @@ const CarouselFactory = (carouselElement) => {
   indexControl.appendChild(indexControlNextButton);
   carouselElement.insertBefore(indexControl, carouselElement.firstChild);
   dotsContainer.classList.add("dots-container");
-  slides.forEach((_, index) => {
+  slides.forEach((slide, index) => {
+    slide.addEventListener("mouseenter", (event) => clearInterval(myTimer));
+    slide.addEventListener("mouseleave", (event) => {
+      clearInterval(myTimer);
+      myTimer = setInterval(function () {
+        progressSlide(1);
+      }, slideChangeInterval);
+    });
+
     const dot = document.createElement("div");
     dot.classList.add("dot");
     dot.addEventListener("click", (event) => setCurrentSlide(index));
@@ -34,6 +50,10 @@ const CarouselFactory = (carouselElement) => {
   indexControlPrevButton.onclick = (event) => progressSlide(-1);
 
   function setCurrentSlide(newIndex) {
+    clearInterval(myTimer);
+    myTimer = setInterval(function () {
+      progressSlide(1);
+    }, slideChangeInterval);
     if (currentIndex === newIndex) return;
     currentIndex = newIndex % slides.length;
     slides.forEach((slide, index) => {
@@ -45,8 +65,8 @@ const CarouselFactory = (carouselElement) => {
     });
     dots[currentIndex].classList.add("active-dot");
     indexIndicatorText.textContent = `
-    ${currentIndex + 1} / ${slides.length}
-  `;
+      ${currentIndex + 1} / ${slides.length}
+    `;
   }
 
   function progressSlide(step) {
