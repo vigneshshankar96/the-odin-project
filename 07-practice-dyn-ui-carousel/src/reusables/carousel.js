@@ -2,7 +2,7 @@ const CAROUSEL_TAG = "pt-carousel";
 const SLIDE_TAG = "pt-slide";
 
 const CarouselFactory = (carouselElement) => {
-  let slideChangeInterval = !carouselElement.getAttribute("msTimeInterval")
+  const slideChangeInterval = !carouselElement.getAttribute("msTimeInterval")
     ? "4000" // default time interval for automatic slides switches
     : carouselElement.getAttribute("msTimeInterval");
   let myTimer;
