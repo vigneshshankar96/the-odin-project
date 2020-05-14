@@ -1,1 +1,1 @@
-import { CarouselModule } from "./reusables/carousel.js";
+import { CarouselModule } from "./reusables/carousel/carousel.js";
