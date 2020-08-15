@@ -1,0 +1,4 @@
+1. Must not leave field blank
+    Enter a valid email address
+2. Confirm Password: Button to view what is typed
+3. Password don't match
